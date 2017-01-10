@@ -1,0 +1,46 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage{amssymb,amsmath ,amsthm, graphicx}
+\usepackage[left=2cm,top=2cm,right=2cm,bottom=2cm,nohead,nofoot]{geometry}
+\input{preamble.tex}
+\usepackage{csquotes}
+
+%kyle's macros
+
+\newcommand{\supp}{\textrm{supp}}
+\newcommand{\diag}{\textrm{diag}}
+\newcommand{\vvk}[2]{\vecn{#1}^{(#2)}}
+\newcommand{\hvv}[1]{\hat{\vecn{#1}}}
+\newcommand{\hvf}{\hvv{f}}
+\newcommand{\Del}{\partial}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+
+
+%% MAIN TEXT
+\title{Template for tex notes}
+\author{Kyle Kloster}
+
+
+\begin{document}
+\maketitle
+
+\abstract{
+This is just a template with useful macros defined for matrices, e.g. $\mA \vx = \vf$.
+ }
+
+\section*{Template}
+
+\[
+\vf^T\mL\vf \quad  = \quad  \| \mB\vf \|_2^2 \quad \geq  \quad \|\mB\vf\|_1^2/\vol(\vf) \quad = \quad
+\left( \sum_{u \sim v}  |\vf_u - \vf_v | \right)^2 / \vol(\vf).
+\]
+{\footnotesize
+\bibliographystyle{amsplain}
+\bibliography{all-bibliography}
+}
+
+\end{document}
+

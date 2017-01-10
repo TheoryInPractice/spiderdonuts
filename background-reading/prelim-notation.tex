@@ -1,0 +1,66 @@
+%%%%%%%
+%%%%%%%
+%%%%      NOTATION AND DEFINITIONS
+%%%%%%%
+%%%%%%%
+\section{Notation and definitions}\label{sec:notation}
+%%%
+%%% DEFINITIONS
+%%%
+\subsection{Graph basics}\label{sec:notation:graph}
+Throughout, let $G = (V,E)$ be a graph with nodes (vertices) $V$ and edges (links) $E$. We let $n = |V|$ and $m = |E|$. We label the nodes with integers 1 through $n$ and can refer to a node $v_j$ by its integer label $j$. We identify an edge by its endpoints $i$, $j$, and label it $e_{ij}$. The \emph{degree} of a node is the number of edges touching that node, and we denote it $d(j)$ or $d_j$.
+A graph is \emph{simple} if no nodes have more than one edge between them (i.e. no multi-edges). A graph is \emph{loopless} if no node has a \emph{self edge} (an edge that has the same node for both of its endpoints). A graph is \emph{undirected} if no edge has a direction, and is \emph{directed} otherwise. A graph is \emph{weighted} if either the nodes or edges have scalars $e \in \mathbb{R}$ associated with them; a graph is \emph{unweighted} otherwise (in which case all edges are assumed to have weight 1).
+
+Unless otherwise stated, we deal entirely with graphs that are simple, loopless, undirected, and unweighted. Because this setting is the one most often considered by most studies, we will call such a graph a \emph{standard} graph. We will also usually deal with graphs that are \emph{connected} (defined below).
+
+%%%
+%%% CONNECT
+%%%
+\subsection{Connectivity basics}\label{sec:notation:connect}
+A \emph{walk} from node $i$ to node $j$ is a sequence of nodes starting with $s$ and ending with $t$ such that consecutive nodes in the sequence, $v_{j}$ and $v_{j+1}$, are connected by an edge. Intuitively: imagine standing on a node $y$ in $G$, then picking an edge that touches your node, and stepping across that edge. Then repeat. Any node $v$ that you land on, you have arrived via a walk from $y$ to $v$.
+
+Note that a walk from $s$ to $t$ is allowed to step across any edge or node multiple times.
+%A \emph{trail} is a walk that does not repeat any edges. Think of a trail in a park -- it might lead you back to the same intersection place but would not have you re-trace steps along a particular road. (Trails are not discussed as often as walks or our next object, paths.)
+A \emph{path} is a walk that does not repeat any nodes, except possibly the final node, i.e. a path could begin at node $v$ and ends at node $v$. Any walk or path that begins and ends at the same node is called \emph{closed}.
+
+A graph $G$ is \emph{connected} if for every pair of nodes $u,v$ in $V$ there exists a path between nodes $u$ and $v$. Any graph $G$ can be divided into \emph{connected components} $G_1, \cdots, G_c$, i.e. subgraphs of $G$ such that all nodes of $G$ are contained in the node-sets of $G_j$, and each subgraph $G_j$ is a connected graph. (Then no edges would connect nodes in subgraphs $G_i, G_j$ with $ i \neq j$.) The graph consisting of a single node is considered a single connected component.
+
+An \emph{edge cut-set} $S$ of a graph $G$ is a set of edges such that if remove all edges from $G$, the resulting graph $G'$ will one more connected component than $G$. In particular, if $G$ is a connected graph, then an edge cut-set $S$ is a set of edges such that deleting those edges will separate (split, disconnect) $G$ into two connected components.
+
+%%%
+%%% MATRIX
+%%%
+\subsection{Matrix and vector basics}\label{sec:notation:matrix}
+
+In general we use non-bold letters $(a,b,c,\lambda, x, \gamma)$ to represent scalars, and bold letters to denote arrays/vectors/matrices. Lower-case bold letters indicate vectors, e.g.
+$\ve,\vv,\vx, \vlam$,
+whereas upper-case bold letters indicate matrices, $\mA, \mM, \mX, \mLam$. To refer to a specific vector entry, we might use any of $\vx(j), \vx[j], (\vx)_j, x(j), x[j], x_j$. To refer to entry $i,j$ of a matrix $\mA$, we use $A(i,j)$, $A_{i,j}$, or $(\mA)_{i,j}$. We denote the transpose of a matrix $\mM$ by $\mM^T$.
+
+The dimension of any vector and matrix can usually be inferred from the context if it is not specifically stated. When dealing with a graph on $n$ nodes, most vectors are $n \times 1$ (i.e. we use column vectors) and most matrices are $n \times n$, though occasionally there are matrices whose dimensions are determined by some quantity other than the number of nodes, for instance the number of edges.
+There are a handful of specific letters that we reserve for specific objects: the vector $\ve$ denotes the vector of all 1s; the vectors $\ve_j$ are standard basis vectors, meaning they are all 0s except with a 1 in the $j$th entry. The matrix $\mI$ is the $n\times n$ identity matrix, $0$ is used to denote the zero vector and the zero matrix, and $\mJ$ denotes a matrix of all 1s.
+
+To any $n$-node graph $G = (V,E)$ we can associate the graph's \emph{adjacency matrix}, usually denoted $\mA$: it is an $n \times n$ matrix in which row $j$ and column $j$ each encode the edge-information of node $j$. More specifically, the matrix satisfies $\mA_{i,j} = 1$ iff nodes $i$ and $j$ are connected by an edge. Then $\mA_{i,j} = 0$ otherwise. Note that this matrix is symmetric, since entries $\mA_{i,j}$ and $\mA_{j,i}$ are both ``1" when nodes $i$ and $j$ are connected by an edge.
+
+We use $\vd$ to denote the $n\times 1$ vector of degrees, so that $\vd_j = d(j)$, and we use $\mD$ to denote the diagonal \emph{degree matrix}, $\mD = \diag(\vd)$. Then we can define the \emph{Laplacian matrix} (also called the \emph{combinatorial Laplacian}, \emph{discrete Laplacian}, and \emph{Kirchoff matrix}) to be $\mL = \mD - \mA$.
+
+The \emph{edge-node incidence matrix} (which we call simply the \emph{incidence matrix}) of a graph that has $m$ edges and $n$ nodes is the $m \times n$ matrix $\mB$ that has $\mB(i,j) = \pm1$ iff edge $i$ has node $j$ as one of its endpoints. To be more precise about the sign of the entries, let edge $i$ have node endpoints $j_{1}$ and $j_{2}$ and label those nodes so that $j_1 < j_2$. Then $\mB(i,j_1) = -1$ and $\mB(i,j_2) = 1$. You can think of this as every edge pointing from its endpoint with smaller label to its endpoint with larger label, so that the edge is negative (outgoing) at the smaller label $j_1$ and positive (ingoing) at the larger label node.
+
+Don't get caught up in these details, but to be totally correct, these details ought to be mentioned:
+(Note that we know the labels of the two nodes are not equal, because we assumed our graph is loopless, and so no node can be both endpoints of a single edge. Since the edge endpoints are distinct nodes, we know one of the two must have a larger label, and hence we can assume $j_1 < j_2$). Also, this particular way of assigning signs to the entries of matrix $\mB$ is one coherent way to assign $\pm1$ entries, but it turns out you can assign the signs in almost any way, as long as each edge has exactly one positive and one negative endpoint, and the important results will all still hold for the matrix $\mB$.
+
+\subsection{Exercises}
+
+\begin{enumerate}[label=\ref{sec:notation}.\arabic*]
+\item Prove that for any standard graph, the sum of the degrees of all nodes equals twice the number of edges, i.e. $\sum_{v \in V} d(v)  =  2|E|$.
+
+\item Let $G$ be a standard graph with $n>1$ nodes. Is it possible that all $n$ nodes have distinct degrees, i.e. is it possible that no two nodes have the exact same degree? If yes, give an example, if no prove that it is impossible.
+
+\item Let $G$ be a connected, standard graph. Prove that deleting a single edge, $e$, from $G$ cannot disconnected $G$ into more than two connected components. In other words, suppose that deleting $e$ from $G$ produces the disconnected graph $G' = G -\{e\}$; show the number of connected components is 2.
+
+\item\label{sec:notation:problem-volume} Let $G$ be a standard graph with adjacency matrix $\mA$. Prove that $\vd = \mA \ve$. Prove that $\ve^T\mA\ve = 2 |E|$.
+
+\item\label{sec:notation:problem-laplacian-singular} Let $G$ be a standard graph with Laplacian matrix $\mL = \mD - \mA$. Prove that $\mL\ve = 0$ using problem \ref{sec:notation:problem-volume}.
+
+\item\label{sec:notation:problem-laplacian-incidence-decomposition} Let $G$ be a standard graph with incidence matrix $\mB$ and Laplacian matrix $\mL$. Prove that $\mL = \mB^T\mB$. Now prove that $\mL\ve = 0$ using the fact that $\mL = \mB^T\mB$.
+
+\end{enumerate}

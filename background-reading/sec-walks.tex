@@ -1,0 +1,27 @@
+\subsection{Graph walks, graph matrices}\label{sec:fundamentals:walks}
+
+
+Here we look at what I call the Fundamental Lemma of Network Analysis because of how often it is used.
+\begin{lemma}[Fundamental Lemma of Network Analysis]\label{thm:fundamental-walk}
+Let the graph $G$ have adjacency matrix $\mA$. Then the number of length $k$ walks from node $i$ to node $j$ is equal to $(\mA^k)_{ij}$.
+\end{lemma}
+
+This lemma is so often used because it gives us a way to measure connectivity between different nodes -- it gives us a way to measure, for a fixed node $s$, what nodes are most important to, or similar to, the node $s$?
+Consider the polynomial $p(x) = \sum_{k=1}^N x^k$. Then the vector
+\[
+\vf =  p(\mA)\ve_s = \sum_{k=1}^N (\mA^k)\ve_s
+\]
+tells us for each node $j$ in the graph, how many total walks are there from node $s$ to node $j$ of length $\leq N$ ?
+Large entries in the vector $\vf$ end up being good predictors for nodes that are important to node $s$.
+
+
+
+
+
+
+\subsection{Exercises}
+
+\begin{enumerate}[label=\ref{sec:fundamentals}.\arabic*]
+\item Prove Lemma~\ref{thm:fundamental-walk}. Hint: begin with $\mA^1$ as the base case, and proceed by induction. For the case $(\mA^k)_{ij}$, think about the question ``how do you make a walk from node $i$ to node $j$ that is of length $k$?".
+
+\end{enumerate}

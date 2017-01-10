@@ -1,0 +1,29 @@
+\subsection{current questions}
+
+Suppose there exists some set of $T$ distinct terms $\diag(\mA^k)$ such that the matrix $\mM$
+formed from their reduced versions, $WR(\diag(\mA^k))$, is invertible.
+Is it the case that there must then exist a set of $T$ terms from the indices $[2:n]$ that such that the resulting matrix $\mM$ is also invertible?
+
+Fix a positive vector $\vp$. Suppose there exists an index set $\mathcal{J}$
+and positive coefficients $c_j$ for $j \in \mathcal{J}$ such that $\vp = \sum_{j\in\mathcal{J}} c_j WR(\diag(\mA^j))$.
+Is it the case that there must exist such a set $\mathcal{J}$ within the set $[2:N]$ (possibly with different, but still positive, coefficients $c_j'$)?
+
+These questions are trying to get at the following: is the problem we are studying really about infinite sequences (power series coefficients),
+or can it always be reduced to looking for a property in the first $n$ terms $WR(\diag(\mA^k))$ for $k = 1:n$?
+
+\subsection{Applying Farkas}
+
+What can we learn from the ``Farkas Lemma" Lemma?  Fix a $\gamma$. Farkas says there exists a solution $\vx \geq 0 $ such that $\mM\vx = (\gamma\ve - \vg)$ if and only if there exists no $\vy$ such that ($\vy^T\mM \geq 0$ and $\vy^T(\gamma\ve - \vg) < 0 $  ).
+Is it possible to change $\gamma$ to force any such $\vy$ out of existence?
+Let $\mathcal{N} = \{ \vy : \vy^T\mM \geq 0,  \|\vy\|_1 = 1 \}$, i.e. the (normalized) set of all potential vectors $\vy$ that could be ``anti-Farkas vectors".
+In order to be an ``anti-Farkas" vector, any such $\vy$ must satisfy the second condition, $\vy^T(\gamma\ve - \vg) < 0 $, i.e.
+\begin{equation}\label{eqn:anti-farkas-criterion}
+  \gamma(\vy^T\ve) < \vy^T\vg
+\end{equation}
+
+Coming from the other direction, suppose there exists a solution $\vx \geq 0$ s.t. $\mM\vx = \gamma\ve - \vg$. Then, applying Farkas's Lemma, we know there can exist no $\vy \in \mathcal{N}$ such that Equation~\eqref{eqn:anti-farkas-criterion} holds.
+For any $\vy \in \mathcal{N}$, we know $\|\vy\|_1 = 1$, and so we know $ \vy^T\ve \leq 1$. Thus, if $\gamma < \vy^T \vg$ then $\vy$ would satisfy Equation~\eqref{eqn:anti-farkas-criterion}.
+Since there can be no such $\vy$, we know $\vy^T \vg \leq \gamma$ must be true, for all $\vy \in \mathcal{N}$.
+
+\textbf{Idea for construction:}
+Fix a vector $\vg$. Then set $\gamma := \displaystyle\sup_{ \vy \in \mathcal{N} } \{ \vy^T\vg \}$. Then we know $\vy^T \vg \leq \gamma$ for all $\vy \in \mathcal{N}$.

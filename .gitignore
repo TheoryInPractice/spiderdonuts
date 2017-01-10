@@ -1,0 +1,23 @@
+## Ignore LaTeX files
+*.aux
+*.log
+*.blg
+*.bbl
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.pdf
+
+# Ignore legacy virtualenv and environment configuration
+*.pyc
+**.ipynb_checkpoints
+/codes/sparkenv
+
+# Ignore python cache
+__pycache__/
+
+#Ignore PyCharm project files
+.idea/
+
+# Ignore misc dev files
+*.ignore*

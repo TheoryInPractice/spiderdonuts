@@ -1,0 +1,217 @@
+
+
+Here we describe some connections of eigenvalue theory to graph cuts and conductance.
+Recall that the Laplacian matrix is defined by $\mL = \mD - \mA$, and that it satisfifes $\mL = \mB^T\mB$, where $\mB$ is the edge-node-incidence matrix.
+Then we define the \emph{normalized Laplacian matrix} to be $\nmL = \mD^{-1/2}\mL\mD^{-1/2}$,
+and we denote its eigenvalues by
+\[
+\lam_1 \geq \lam_2 \geq \cdots \geq \lam_{n-1} \geq \lam_n.
+\]
+Defining the \emph{normalized adjacency matrix} to be $\nmA = \mD^{-1/2}\mA\mD^{-1/2}$, note that the normalized Laplacian is simply $\mI - \nmA$.
+
+In this section we will build up to proving a connection of the second smallest eigenvalue of $\nmL$ to the best (smallest) conductance cut in the graph $G$.
+We begin by proving a simple but useful fact about the eigenvalues of $\mL$ and $\nmL$.
+
+A $\mM \in \mathbb{R}^{n \times n}$ with all real eigenvalues is \emph{positive definite} iff all of its eigenvalues are positive. Instead, we say $\mM$ is \emph{postive semi-definite} iff all of its eigenvalues are nonnegative.
+(Note that all positive definite matrices are positive semi-definite, but a positive semi-definite matrix (which might have eigenvalues equal to 0) is not necessarily positive definite.)
+
+Note that these definitions are restricted to matrices with all real eigenvalues -- the definitions can be extended to matrices with possibly complex eigenvalues, but this is beyond the scope of this project.
+(This is because all matrices we are concerned with are similar to symmetric matrices, which are guaranteed to have all real-valued eigenvalues, see Theorem~\ref{thm:symmetric-orthogonal-eigen} below.)
+
+Speaking of symmetric matrices, a particularly well-studied area within positive definite and semi-definite matrices is the subject of symmetric postive definite (SPD) and semi-definite (SPSD) matrices.
+So we will have the luxury of dealing in SPD and SPSD matrices here, which enjoy some useful properties that more general postiive (semi-)definite matrices do not. For example:
+
+\begin{theorem}\label{thm:spsd:decomposition}
+  Let $\mM \in \mathbb{R}^{n \times n}$ be symmetric. Then $\mM$ is SPSD iff there exists some $\mU \in \mathbb{R}^{n \times r}$ such that $\mM = \mU \mU^T$.
+\end{theorem}
+\begin{proof}
+We will prove only the easier direction of this proposition here. We prove the other direction below, after establishing a little more machinery. Assume that $\mM = \mU\mU^T$, and let $(\vv, \lam)$ be any eigen-pair of the matrix $\mM$, and let $\vv$ be a unit eigen-vector. Then we have
+\begin{align}
+  \mM\vv &= \lam \vv & \text{definition of eigen-vector} \\
+  \vv^T \mM \vv &= \lam \vv^T\vv & \text{left-multiply by $\vv^T$} \\
+  \vv^T\mU \mU^T \vv &= \lam & \text{substitute $\mM = \mU\mU^T$ and simplify} \\
+  (\mU^T\vv)^T (\mU^T\vv) &= \lam
+\end{align}
+and since $(\mU^T\vv)^T (\mU^T\vv) \geq 0$, we know that $\lam \geq 0$, proving that $\mM$ is SPSD. This trick will come back to help us a number of times, so keep it in your pocket.
+\end{proof}
+
+Recalling that $\mL = \mB^T\mB$, this proposition implies that the Laplacian matrix $\mL$ is positive semi-definite. We also know $\mL$ is symmetric, so $\mL$ is SPSD. Is the Laplacian positive definite? (i.e. not semi-definite?) No: we showed in an earlier section that $\mL\ve = 0\ve$, so we definitely know that $\mL$ is semi-definite, not definite.
+But what about $\nmL$? We know it is still symmetric, from its definition.
+Furthermore, $\nmL = \mD^{-1/2}\mL\mD^{-1/2} = \mD^{-1/2}\mB^T\mB\mD^{-1/2} = \hat{\mB}^T\hat{\mB}$, where $\hat{\mB} = \mB\mD^{-1/2}$. Thus, $\nmL$ is also SPSD, with nullvector $\vv_n = (\mD^{1/2}\ve)$:
+\[
+\nmL (\mD^{1/2}\ve) = \mD^{-1/2}\mL\mD^{-1/2} \mD^{1/2}\ve = \mD^{-1/2} \mL\ve = 0 \ve.
+\]
+With this we have compeleted a proof of the following.
+\begin{proposition}
+  For any standard graph, $\mL$ and $\nmL$ are SPSD with null-vectors $\ve$ and $\mD^{1/2}\ve$, respectively.
+\end{proposition}
+
+We will focus for now on the matrix $\nmL$. Denote its eigenpairs by $(\vv_j, \lam_j)$, and recall that we just finished proving $\lam_1 \geq \lam_2 \geq \cdots \geq \lam_{n-1} \geq \lam_n = 0$.
+To continue, we need the following essential result about the eigen-properties of symmetric matrices.
+
+\begin{proposition}\label{thm:symmetric-orthogonal-eigen}
+  Let $\mM$ be any real, $n\times n$, symmetric matrix. Then not only is $\mM$ diagonalizable (c.f.~Theorem~\ref{thm:symmetric-diagonalizable}), i.e. $\mM = \mV\mLam\mV\inv$, but we also have that $\mM$ has real eigenvalues and all its eigenvectors are orthogonal, so $\mM = \mV \mLam \mV^T$ and $\mV^T\mV = \mI$.
+\end{proposition}
+
+\begin{proof}
+We are going to assume Theorem~\ref{thm:symmetric-diagonalizable}, i.e. assume that symmetric $\mM$ has diagonal form $\mM = \mV \mLam \mV\inv$.
+Let $\vv_i$ and $\vv_j$ be eigenvectors corresponding to distinct eigenvalues. Claim: then $\vv_i^T\vv_j = 0$. To prove this, note that
+\begin{align}
+  \lam_i \vv_i^T\vv_j &= (\lam_i \vv_i^T)\vv_j \\
+  &= (\vv_i^T \mM^T) \vv_j \\
+  &= \vv_i^T (\mM^T \vv_j) \\
+  &= \vv_i^T (\mM \vv_j) & \text{because $\mM = \mM^T$} \\
+  &= \lam_j  \vv_i^T \vv_j
+\end{align}
+so that $\lam_i \vv_i^T\vv_j = \lam_j \vv_i^T\vv_j$. If $\vv_i^T\vv_j \neq 0 $, then we can divide both sides by $\vv_i^T\vv_j$ to yield $\lam_i = \lam_j$, but this would contradict the assumption that the eigenvalues were distinct. Thus, $\vv_i^T\vv_j = 0$, proving the claim. Observe that this part of the proof used the fact that $\mM = \mM^T$.
+
+We have proved that eigenvectors of distinct eigenvalues are orthogonal. It remains to show that eigenvectors of the same eigenvalue are orthogonal. For any eigenvalue, $\lam_j$, let $E_j$ be the space spanned by all eigenvectors of $\mM$ associated to $\lam_j$. So for all $\vu$ such that $\mM \vu = \lam_j \vu$, we have $\vu \in E_j$; this is called the \emph{eigenspace} associated to the eigenvalue $\lam_j$.
+Note that it is in fact a vector space: given any $\va, \vb \in E_j$ and any scalar $\gamma$ we have $\mM(\va + \gamma \vb) = \mM\va + \gamma \mM\vb = \lam_j\va + \gamma\lam_j\vb = \lam(\va + \gamma\vb) \in E_j$. This proves $E_j$ is in fact a subspace.
+By standard linear algebra facts, every subspace of a finite dimensioned vectorspace (in this case $\mathbb{R}^n$) has an orthogonal basis.
+Let $\{\vb_1, \cdots, \vb_d\}$ be an orthogonal basis for the eigenspace $E_j$, and set $\mV_j = [ \vb_1, \cdots, \vb_d]$.
+Then $\mV_j^T\mV = \mI$ by construction. Furthermore, because $\mV_i$ and $\mV_j$ are bases for the eigenspaces of distinct eigenvalues, we know that $\mV_i$ and $\mV_j$ are orthogonal: $\mV_i^T\mV_j = 0$. Thus, setting $\mV = [ \mV_1, \cdots , \mV_g]$ we have $\mV^T\mV = \mI$ by construction. This completes the proof.
+\end{proof}
+
+\textbf{Remark.}
+Now that we have this theorem, we can complete a proof of an earlier theorem. By Theorem~\ref{thm:symmetric-orthogonal-eigen} we know we can write $\mL = \mV \mLam \mV^T$. Since $\mL$ is SPSD, we also know that each eigenvalue is nonnegative, and so we can take the square root of each eigenvalue, and write $\mLam = \mLam^{1/2}\mLam^{1/2}$. Since $\mLam$ is diagonal, we have $\mLam^{1/2} = (\mLam^{1/2})^T$. Thus, we can write $\mL = \mV\mLam^{1/2} \mLam^{1/2} (\mV\mLam^{1/2})^T$.
+Setting $\hat{\mV} = \mV\mLam^{1/2}$ we can write $\mL = \hat{\mV}\hat{\mV}^T$. This provides a constructive proof that symmetric positive semi-definite matrices can be written $\mM = \mU\mU^T$, completing the proof of Theorem~\ref{thm:spsd:decomposition}.
+
+
+\subsubsection{Rayleigh quotients and minimax}
+We need just a few more eigen-tools before we can analyze graph spectra. Consider again the equation we used earlier $\vv^T\mM\vv$. For any eigenvector $\vv$ that has unit length (i.e. $\vv^T\vv = 1$), we know that $\vv^T\mM\vv = \lam$. If $\vv$ does not have unit length, then instead we get $\vv^T\mM\vv = \lam \vv^T\vv$. If we divide this equation by $\vv^T\vv$, we get what is called a \emph{Rayleigh quotient} with respect to $\mM$ and $\vv$:  $R(\mM,\vv) = \tfrac{\vv^T\mM\vv}{\vv^T\vv}$.
+Rayleigh quotients are useful tools for analyzing eigenvalues and eigenvectors, because we know that for any eigenpair $(\vv, \lam)$ the Rayleigh quotient always satisfies $R(\mM, \vv) = \lam$.
+
+It turns out that there is a way to define the eigenvectors and values using these Rayleigh quotients.
+\begin{proposition}
+  For any square, real symmetric matrix $\mM$, the smallest eigenvalue $\lam_n$ can be defined as follows:
+  \begin{equation}\label{eqn:min-eigenvalue}
+    \lam_n := \min_{\vx \neq 0 \in \mathbb{R}^n} \frac{\vx^T\mM\vx}{\vx^T\vx}.
+  \end{equation}
+\end{proposition}
+\begin{proof}
+  To see that this is the case, first note that $R(\mM,\vv_n) = \vv_n^T\mM\vv_n / \vv_n^T\vv_n = \lam_n$, so certainly the minimum in Equation~\eqref{eqn:min-eigenvalue} is at least as small as $\lam_n$.
+  Now suppose that there were a vector $\vx$ and a value $\gamma \in \mathbb{R}$ such that $\vx^T\mM\vx/\vx^T\vx = \gamma < \lam_n$. Since $\mM$ is real and symmetric, we know that it has an eigen-decomposition $\mM = \mV\mLam\mV^T$. Thus we can write
+  \begin{align}
+    \gamma &= \vx^T\mV \mLam \mV^T\vx / \vx^T\mI \vx \\
+    &= (\mV^T\vx)\mLam(\mV^T\vx) / \vx^T\mV\mV^T\vx \\
+    &= (\mV^T\vx)\mLam(\mV^T\vx) / (\mV^T\vx)^T (\mV^T\vx).
+  \end{align}
+  For simplicity of notation, let $\vy = \mV^T\vx$. This expression can be re-written as $\gamma = \vy^T\mLam\vy / \vy^T\vy$, where $\mLam$ is the diagonal matrix of eigenvalues. Writing it out explicitly, we have
+  \begin{align}
+    \gamma &= \vy^T\mLam\vy / \vy^T\vy \\
+    &= \sum_{y_j^2 \lam_j} / \sum_{y_j^2}.
+  \end{align}
+  Thinking of $\gamma$ as a function of the variables $y_1, \cdots, y_n$, we can apply basic calculus to the above expression to prove that the minimum value of $\gamma(\vy)$ is $\gamma = \lam_n$.
+\end{proof}
+
+It further turns out that this characterization of the smallest eigenvalue can be extended to define the other eigenvalues as well.
+The full theorem lies beyond the scope of this project, so we state here a simplified version of the \emph{min-max theorem} adapted to our specific circumstances.
+
+\begin{proposition}\label{thm:second-smallest-eig}
+  Let $\mM$ be a square, real symmetric matrix with smallest eigenpair $\lam_n = 0$ and $\vv_n$. Then $\lam_{n-1}$ is equal to
+  \begin{equation}
+    \lam_{n-1} = \min_{ \vx: \vx^T \perp \vv_n, \vx \neq 0} \frac{\vx^T \mM \vx^T}{\vx^T\vx}
+  \end{equation}
+  where $\vx$ must be real-valued vectors.
+\end{proposition}
+We will not prove this.
+
+\paragraph{Cheeger's Inequality}
+ At last we have established enough foundation to begin describing spectral characterizations of graph properties. Here we state a famous result relating the best conductance cut in a graph to the graph's eigenvalues. We've proved before that the normalized Laplacian matrix has $\lam_n = 0$ as its smallest eigenvalue. Furthermore, it follows from the eigenvalue structure of $\mL$ that the multiplicity of the eigenvalue $\lam_n = 0$ is equal to the number of connected components in the graph. It is the case that the graph is connected if and only if the eigenvalue $\lam_{n-1}$ is nonzero -- for this reason we call $\lam_{n-1}$ the \emph{algebraic connectivity} of the graph. The algebraic connectivity is 0 when the graph is disconnected, and nonzero when the graph is connected -- but here we present a theorem showing that the magnitude of $\lam_{n-1}$ actually tells us \emph{how well connected} the graph is, i.e. how many edges do we need to cut to separate the graph into two roughly balanced pieces?
+
+
+ \begin{theorem}[Cheeger's Inequality]
+   Let $G$ have normalized Laplacian $\nmL$ with eigenvalues $\lam_1 \geq \cdots \geq \lam_{n-1} \geq \lam_{n}$. Let $S$ be the smallest-conductance cut in $G$, and denote its conductance by $\Phi = \phi(S)$. Then we have
+   \[
+\sqrt{2}\sqrt{\lam_{n-1}} \geq \Phi \geq \tfrac{1}{2}\lam_{n-1}
+   \]
+ \end{theorem}
+
+ Before proving the easy direction in this theorem, we need a lemma.
+\begin{lemma}\label{thm:laplacian-energy}
+  Let $\mL$ be the Laplacian matrix for any standard graph $G = (V,E)$. Then $\vf^T \mL \vf = \sum_{e_{ij} \in E} (f_i - f_j)^2$, i.e. $\vf^T \mL \vf$ equals the sum of the squares of the differences of $\vf$ across each edge.
+\end{lemma}
+The proof is left as an exercise.
+
+ \begin{proof}[Of Cheeger's Inequality]
+   For a full proof, consult~\cite{chung1997spectral}. We present just the easier direction here, $\Phi \geq \tfrac{1}{2}\lam_{n-1}$.
+
+   Recall that for $\nmL$ we have that $\vv_n = \mD^{1/2}\ve$ is the eigenvector of $\nmL$ corresponding to the smallest eigenvalue $\lam_n = 0$.
+   So by Theorem~\ref{thm:second-smallest-eig} we can express the algebraic connectivity of the graph as
+   \[
+   \lam_{n-1} = \min_{ \vx: \vx^T \perp \mD^{1/2}\ve , \vx \neq 0} \frac{\vx^T \nmL \vx^T}{\vx^T\vx}  = \min_{ \vx: \vx^T \perp \mD^{1/2}\ve , \vx \neq 0} R(\nmL, \vx)
+   \]
+   We will show that conductance can be expressed as a Rayleigh quotient related to the above as follows.
+   The conductance of a set $S$ equals $\phi(S) = \cut(S, G-S) /\min\{ \vol(S), \vol(G-S)\} $. Let $\ve_S$ be the indicator vector of the set $S$, i.e. $\ve_S$ is 0 everywhere, except 1s in indices corresponding to nodes in the set $S$. Then $\vol(S) = \ve_S^ \mD \ve_S$. For ease of notation, we will switch from using $G-S$ to using $S^c = G-S$ to denote the complement of a set of nodes.
+   Define the vector $\vy = \tfrac{1}{\vol(S)} \ve_S - \tfrac{1}{\vol(S^c)} \ve_{S^c}$.
+   We claim that $\vx = \mD^{1/2}\vy$ is orthogonal to $\mD^{1/2}\ve$, so that $\lam_{n-1} \leq R(\nmL,\vx)$ must be true by Theorem~\ref{thm:second-smallest-eig}; and furthermore that $R(\nmL,\vx)$ is related to the conductance $\Phi$ that we seek to bound.
+
+   Proof of the first claim:
+   \begin{align}
+     \vx^T\mD^{1/2}\ve &= \vy^T \mD^{1/2} \mD^{1/2} \ve \\
+     &= \left( \tfrac{1}{\vol(S)} \ve_S - \tfrac{1}{\vol(S^c)} \ve_{S^c} \right)^T \mD\ve \\
+     &= \tfrac{1}{\vol(S)}  \ve_S^T \mD\ve  - \tfrac{1}{\vol(S^c)} \ve_{S^c} \mD\ve \\
+     &= 1 - 1,
+   \end{align}
+as desired.
+
+To prove the second claim, observe the following:
+\begin{align}
+  \vy^T \mL \vy &= \vy \mD^{1/2} \mD^{-1/2} \mL \mD^{-1/2} \mD^{1/2} \vy \\
+  &= \vx^T \nmL \vx
+\end{align}
+and $\vy^T\mD\vy = \vx^T\vx$. These equivalencies enable us to write $R(\nmL,\vx) = \vy^T \mL \vy / \vy^T\mD\vy$, so we can prove something about $R(\nmL,\vx)$ by instead working on the more convenient expression $\vy\mL\vy / \vy^T\mD\vy$.
+
+Using Lemma~\ref{thm:laplacian-energy} we can write $\vy\mL\vy = \sum_{e_{ij} \in E} ( y_i - y_j )^2$.
+From the definition of $\vy$, we know that if $i$ and $j$ are both in the same set ($S$ or $S^c$), then $( y_i - y_j )^2 = 0$; if instead $i$ and $j$ are in opposite sets, we have $( y_i - y_j )^2 = (\tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)})^2$ regardless of which node is on which side. This occurs only when the nodes are the endpoints of an edge $e_{ij}$ crossing the cut $\cut(S,S^c)$. Thus, we have
+\begin{align}
+  \vy\mL\vy &= \sum_{e_{ij} \in \cut(S) } (\tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)})^2  \\
+  &= (\tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)})^2 \sum_{e_{ij} \in \cut(S)}   \\
+  &= (\tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)})^2 \cut(S)
+\end{align}
+and hence, $\vy^T \mL \vy = (\tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)})^2 \cut(S)$. At the same time, we have $\vy^T\mD\vy = \sum_{k=1}^n y_k^2 d(k) = \sum_{v \in S} \tfrac{1}{\vol(S)}^2 d(v)  +  \sum_{u\in S^c} \left(\tfrac{-1}{\vol(S^c)}\right)^2 d(u)$.
+Factoring yields  $\tfrac{1}{\vol(S)}^2 \sum_{v \in S}  d(v)  +  \tfrac{1}{\vol(S^c)}^2 \sum_{u\in S^c}  d(u)$; then, observing that $\sum_{v \in S}  d(v)  = \vol(S)$ and $\sum_{u \in S^c}  d(u) = \vol(S^c)$ allows us to simplify the expression: $\vy^T \mD \vy = \tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)}$.
+
+At last, we can combine these two components to write
+\begin{align}
+  \vy^T\mL\vy / \vy^T\mD\vy  &=  \left(\tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)}\right)^2 \cut(S) / \left(\tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)} \right) \\
+  &= \cut(S) \left(\tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)}\right).
+\end{align}
+Finally, note that for any two numbers $A,B$ we have $A+B \leq 2 \max\{A,B\}$, and so $\tfrac{1}{\vol(S)} + \tfrac{1}{\vol(S^c)} \leq 2 \max\left\{  \tfrac{1}{\vol(S)}, \tfrac{1}{\vol(S^c)}   \right\}$, which is the same as $1 / \min\{  \vol(S), \vol(S^c) \}$.
+Hence, $\vy^T\mL\vy / \vy^T\mD\vy \leq 2 \cut(S) /  \min\{  \vol(S), \vol(S^c) \}$, which exactly equals $2\phi(S)$. We have shown that this is true for \emph{any} set $S$, and so we have shown in particular that $\vy^T \mL \vy / \vy^T \mD \vy \leq 2 \Phi$, the conductance of the minimum conductance cut.
+But we showed above that that $R(\nmL,\vx) = \vy^T\mL\vy / \vy^T\mD\vy$, and so we've proved half of the theorem, $\lam_{n-1} \leq 2 \Phi$.
+
+ \end{proof}
+
+Techniques in the proof are useful for expressing and relating graph and matrix properties, and will come back again and again. Often constructing a contrived vector like $\vy$ turns out to be a very useful trick. This relationship between $R(\nmL, \vx)$ and conductance is essential, and gets used again and again.
+
+
+\subsection{Cauchy Interlacing Theorem}\label{sec:cauchy}
+
+Min-max eigenvalue result can be used to prove that following theorem that helps us relate the eigenvalues of a graph to eigenvalues of its subgraphs. The Cauchy Interlacing Theorem can be stated in more generality so that it applies in slightly broader contexts linear algebraically speaking, but we don't need that extra strength for our purposes. Instead, we will state a version of Cauchy Interlacing Theorem~\cite{golub2012matrix} that is particular to our purposes. Before stating the theorem, we first define a \emph{principal submatrix} $\mB$ of a $n \times n$ matrix $\mA$ as follows: let $j_1, ... j_m$ be any indices in $[1, n]$. Then a principal submatrix is any submatrix of the form $\mB = \mA( [j_1, \cdots, j_n] , [j_1, \cdots, j_n] )$. In words, $\mB$ is a subset of the rows (and columns corresponding to those rows) of $\mA$.
+
+\begin{theorem}[Cauchy's Interlacing Theorem]
+
+  Let $\mA$ be a real-valued, symmetric $n \times n$ matrix. Let $\mB$ be any $m \times m$ principal submatrix of $\mA$, with $n = m+k$; i.e., let $\mB$ result from removing $k$ rows and their corresponding columns from $\mA$.
+  Let $\mA$ have eigenvalues $\lam_1 \geq \cdots \geq \lam_n$ and $\mB$ have eigenvalues $\mu_1 \geq \cdots \geq \mu_m.$
+  Then these eigenvalues satisfy
+  \[
+  \lam_{k+j} \leq \mu_j \leq \lam_j
+  \]
+  for $j=1:m$.
+
+\end{theorem}
+
+
+\subsubsection{Exercises}\label{sec:fundamentals:eigen2:exercises}
+
+ \begin{enumerate}[label=\ref{sec:fundamentals:eigen2}.\arabic*]
+   \item Proving Lemma~\ref{thm:laplacian-energy}. Note that $\vf^T \mL \vf = \vf^T\mD\vf - \vf^T \mA \vf$.
+   \begin{enumerate}
+     \item Show that the sum $\vf^T \mA \vf = \sum_{i=1}^n \sum_{j=1}^n  f_i A_{ij} f_j$ is equal to $2 \sum_{e_{ij} \in E} f_i f_j $.
+     \item Fix any node $k$. Given that node $k$ has $d(k)$ edges incident to it, show that in the summation $\sum_{e_{ij} \in E} f_i f_j $ the factor $f_k$ appears in $d(k)$ different terms of the summation.
+     \item Next show that in the sum $\vf^T\mD\vf$ the term $f_k^2$ appears a total of $d(k)$ times.
+     \item Use the first two parts, and the fact that $f_i^2 + f_j^2 - 2f_i f_j = (f_i - f_j)^2$, to show that $\vf^T\mL\vf = \sum_{e_{ij} \in E }  (f_i - f_j)^2$.
+   \end{enumerate}
+
+ \end{enumerate}

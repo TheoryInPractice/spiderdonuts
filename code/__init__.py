@@ -1,0 +1,1 @@
+"""Sparkstruck Python code module."""
