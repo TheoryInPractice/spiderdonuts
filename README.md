@@ -11,6 +11,7 @@ In general, all code will be in Python interfacing with the networkx module.
 
 ## Main research focuses
 
-One pillar of this project, which we'll call "Walk Entropy", studies the information about a graph encoded by its walk structure, and studies a graph's walk structure by looking at polynomials and functions of graph matrices.
+The idea of "Walk Entropy" is concerned with the information about a graph encoded by the graph's walk structure. In this project, we study a graph's walk structure by looking at polynomials and functions of graph matrices.
+The main focus is understanding when a non--walk-regular graph can "appear to be" walk-regular. The adjacency matrix M of a walk-regular graph will always have constant diagonal, no matter what function (or polynomial) we apply to the matrix, f(M). We study non--walk-regular graphs for which there exist functions (which we call "deceptive" functions) such that f(M) is constant-diagonal even though the graph is not walk-regular. Graphs for which such functions exist we call "deceptive graphs".
 
-For now, the goal here is to better understand how a graphs' walks and matrix functions relate to each other, and design some Python codes for glueing together different kinds of graphs where we can test our findings in a concrete setting. The kinds of graphs we'll want to put together will be highly structured / symmetric, like hypercubes or polygons we fit together to make polyhedra.
+As part of this project we have developed some necessary and some sufficient conditions for graphs to be deceptive, as well as algorithms for constructing deceptive functions in some circumstances. This repository includes codes both for generating classes of graphs, some of which we have verified to be deceptive, as well as for checking whether or not a given graph is deceptive.
