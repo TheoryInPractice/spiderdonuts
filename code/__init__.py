@@ -1,1 +1,1 @@
-"""Sparkstruck Python code module."""
+"""Spiderdonuts Python code module."""

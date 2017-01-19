@@ -1,4 +1,4 @@
-## Run from /sparkstruck/notes-walk-entropy
+## Run from /Spiderdonuts/notes-walk-entropy
 
 rm *.aux
 rm *.log

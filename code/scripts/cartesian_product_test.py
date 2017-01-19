@@ -1,7 +1,7 @@
 """Tests for cartesian_product."""
 
-from code.common import generators as gen
-from code.struckpod import walks
+from code import generators as gen
+from code import polygraph
 import networkx as nx
 from tabulate import tabulate
 
@@ -27,10 +27,10 @@ for graph_type, generator in GRAPHS.items():
     crow = [graph_type]
     for i in range(MIN, MAX_1):
         graph = nx.cartesian_product(pyramid, generator(i))
-        w_obj = walks.walk_classes(graph)
+        w_obj = polygraph.walk_classes(graph)
         w = w_obj['eig_matrix']
-        pwrow.append(walks.pair_wise_flip_flopping(w))
-        acrow.append(walks.average_condition_flip_flopping(w))
+        pwrow.append(polygraph.pair_wise_flip_flopping(w))
+        acrow.append(polygraph.average_condition_flip_flopping(w))
         crow.append(w_obj['num_classes'])
     pwff.append(pwrow)
     acff.append(acrow)

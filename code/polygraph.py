@@ -1,11 +1,11 @@
-"""Struckpod module for dealing with graph walks."""
+"""Spiderdonuts module for dealing with graph walks."""
 
 # Imports
 import networkx as nx
 import numpy as np
 import scipy as sp
 from itertools import chain, combinations
-from code.common import linalg
+from code import linalg
 
 
 # Number of decimals used for floating point comparison
@@ -234,10 +234,10 @@ def walk_classes(graph):
     }
 
 
-def starfish_hyperchain_walk_classes(sh_obj):
-    """Analyze the walk classes of a starfish hyperchain.
+def spider_torus_walk_classes(st_obj):
+    """Analyze the walk classes of a spider torus.
 
-    The walk classes of a starfish hyperchain are determined
+    The walk classes of a spider torus are determined
     by applying a specialized version of the general analysis
     algorithm. The diagonal matrix is constructed by the
     diagonals of the matricies A^2, A^k1, ... A^kn for k in
@@ -245,8 +245,8 @@ def starfish_hyperchain_walk_classes(sh_obj):
 
     Parameters
     ----------
-    sh_obj : dict
-        A dict as returned by `gen.starfish_hyperchain`
+    st_obj : dict
+        A dict as returned by `gen.spider_torus`
 
     Returns
     -------
@@ -259,9 +259,9 @@ def starfish_hyperchain_walk_classes(sh_obj):
         graph       - A copy of the graph
     """
     # Get arguments
-    graph = sh_obj['graph']
-    representatives = sh_obj['representatives']
-    copies = sh_obj['copies']
+    graph = st_obj['graph']
+    representatives = st_obj['representatives']
+    copies = st_obj['copies']
 
     # Add 2 to the list of copies, to be used as powers
     # powers = [2] + copies

@@ -348,8 +348,8 @@ def snowflakecycle(flake_number=5, inner_cycle=5, outer_cycle=3):
     return nx.from_numpy_matrix(AG)
 
 
-def starfish(degree, length):
-    """Create a starfish graph.
+def spider(degree, length):
+    """Create a spider graph.
 
     Parameters
     ----------
@@ -361,7 +361,7 @@ def starfish(degree, length):
     Returns
     -------
     Networkx Graph
-        Starfish graph
+        Spider graph
     """
     # Create a single spoke and get its adjacency matrix W
     spoke = nx.path_graph(length)
@@ -378,45 +378,45 @@ def starfish(degree, length):
     num_nodes = (degree * length) + 1
 
     # Create a num_nodes x num_nodes matrix, filled with zeroes.
-    # This will eventually be the matrix of the starfish graph
-    starfish = np.zeros((num_nodes, num_nodes))
+    # This will eventually be the matrix of the spider graph
+    spider = np.zeros((num_nodes, num_nodes))
 
-    # Add the spokes to the starfish
-    starfish[1:num_nodes, 1:num_nodes] = spokes
+    # Add the spokes to the spider
+    spider[1:num_nodes, 1:num_nodes] = spokes
 
     # Connect each spoke to the center
-    starfish[0, 1:degree + 1] = 1
-    starfish[1:degree + 1, 0] = 1
+    spider[0, 1:degree + 1] = 1
+    spider[1:degree + 1, 0] = 1
 
     # Construct and return a networkx graph from the matrix
-    return nx.from_numpy_matrix(starfish)
+    return nx.from_numpy_matrix(spider)
 
 
-def starfish_hyperchain(degree, length, copies):
-    """Create a hyperchain of starfish graphs.
+def spider_torus(degree, length, copies):
+    """Create a torus of spider graphs.
 
     A hyperchain is formed with the folling process:
 
-    Take `copies[0]` copies of a starfish graph and link them
+    Take `copies[0]` copies of a spider graph and link them
     together in a ring by connecting each node in the first
-    level of each starfish to the same node in the adjacent
-    starfish graphs in the ring.
+    level of each spider to the same node in the adjacent
+    spider graphs in the ring.
 
     Take `copies[1]` copies of the original ring, and link them
     together in a new ring by connection each node in the second
-    level of each starfish to the same node in the adjacent starfish
+    level of each spider to the same node in the adjacent spider
     graphs in the ring.
 
     ...
 
-    Repeat until reaching the outer level of the starfish.
+    Repeat until reaching the outer level of the spider.
 
     Parameters
     ----------
     degree : Integer
-        The degree of the base starfish graph
+        The degree of the base spider graph
     length : Integer
-        The length of each arm of the base starfish graph
+        The length of each arm of the base spider graph
     copies : List
         A list containing the number of copies of the
         previous level to maek at each level of the
@@ -429,7 +429,7 @@ def starfish_hyperchain(degree, length, copies):
         graph           - The full hyperchain graph
         representatives - An list of representative nodes from each class,
                           in ascending order by level.
-        degree          - Degree of the base starfish graph
+        degree          - Degree of the base spider graph
         length          - Length of each pendant
         copies          - Number of copies in each ring
     """
@@ -439,18 +439,18 @@ def starfish_hyperchain(degree, length, copies):
     if len(copies) != length:
         raise Exception('Invalid number of copies.')
 
-    # Create the base starfish graph
-    sf_graph = starfish(degree, length)
+    # Create the base spider graph
+    spider_graph = spider(degree, length)
 
-    # Get the adjacency matrix and shape of the base starfish
-    sf_adj = nx.adjacency_matrix(sf_graph).todense()
-    sf_rows, sf_cols = sf_adj.shape
+    # Get the adjacency matrix and shape of the base spider
+    spider_adj = nx.adjacency_matrix(spider_graph).todense()
+    spider_rows, spider_cols = spider_adj.shape
 
-    # Copy the starfish adjacency matrix. This will be the base
+    # Copy the spider adjacency matrix. This will be the base
     # matrix that gets built up into the hyperchain.
-    adj = sf_adj.copy()
+    adj = spider_adj.copy()
 
-    # Number of copies of the original starfish that exist
+    # Number of copies of the original spider that exist
     # within the hyperchain
     num_duplcates = 1
 
@@ -464,11 +464,11 @@ def starfish_hyperchain(degree, length, copies):
         # Construct a diagonal matrix which has a 1 for every
         # pair of nodes that will be connected in this level.
         # This is determined by taking the nodes from the
-        # original starfish graph that exist at `level` and
+        # original spider graph that exist at `level` and
         # tiling it `num_duplcates` times.
         min_node = 1 + (level * degree)
         max_node = 1 + ((level + 1) * degree)
-        row = np.zeros(sf_rows)
+        row = np.zeros(spider_rows)
         row[min_node:max_node] = 1
         diagonal = np.diag(np.tile(row, num_duplcates))
 

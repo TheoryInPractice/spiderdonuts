@@ -1,4 +1,4 @@
-"""Sparkstruck module for shared graph functions."""
+"""Spiderdonuts module for shared graph functions."""
 
 # Imports
 import matplotlib.pyplot as plot

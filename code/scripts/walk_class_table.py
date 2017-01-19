@@ -2,8 +2,7 @@
 
 # Imports
 from tabulate import tabulate
-import code.common.generators as gen
-import code.struckpod.walks as walks
+from code import polygraph, generators as gen
 import numpy as np
 
 
@@ -37,7 +36,7 @@ for faces in range(MIN_FACES, MAX_FACES):
         g = gen.pyramid_prism(faces, layers)
 
         # Analyze classes
-        w_obj = walks.walk_classes(g)
+        w_obj = polygraph.walk_classes(g)
 
         # Get the unique walk matrix w
         w = w_obj['uniq_matrix']
@@ -47,10 +46,10 @@ for faces in range(MIN_FACES, MAX_FACES):
         col = layers - MIN_LAYERS
 
         # Check which properties it holds
-        pwff[row][col] = walks.pair_wise_flip_flopping(w)
-        dff[row][col] = walks.dominant_flip_flopping(w)
-        acff[row][col] = walks.average_condition_flip_flopping(w)
-        ecm[row][col] = walks.each_class_max(w)
+        pwff[row][col] = polygraph.pair_wise_flip_flopping(w)
+        dff[row][col] = polygraph.dominant_flip_flopping(w)
+        acff[row][col] = polygraph.average_condition_flip_flopping(w)
+        ecm[row][col] = polygraph.each_class_max(w)
 
 
 def _annotate(array):
