@@ -1,0 +1,77 @@
+
+
+Returning to the case in which there are $k$ distinct node-walk-classes, we again want to identify conditions that will guarantee a positive solution to Equation~\eqref{eqn:class-walk-matrix1}.
+The problem now is that the matrix $\mM$ is no longer $2\times 2$, so guaranteeing (1) invertibility of $\mM$ (or simply that the equation $\mM\vc = \tilde{\vg}$ is consistent), and (2) positivity of the solution, are both much more difficult, even in the $3\times 3$ case.
+
+We have \emph{a} necessary condition for the existence of $\vc$ -- a condition we dscribed above, which we will call ``Pair-wise Flip-flop". Here are some other ideas.
+
+\paragraph{Approaches being considered}
+This is just a summary. It's unclear so far exactly which of these conditions is sufficient or necessary for Deception, and which are sufficient/necessary for Diagonal Dominance (but definitely they are all related).
+\begin{enumerate}
+  \item Pair-wise Flip-flop (PWFF) -- For every pair of node classes $C_i$ and $C_j$, there exists walk lengths $L_i$ and $L_j$ such that $C_i$ has more closed $L_i$-walks than $C_j$ and vice versa.
+  \item All-subset Flip-flop (ASFF) -- For each subset $S$ of node-classes, there exists a walk length $L$ for which the total number of $L$-walks in $S$ is greater than the total number of $L$-walks in $S^c$.
+  \item Each-Class-Max (ECM) -- for each walk-class $j$, there exists a walk-length $L_j$ such that class $j$ has more closed $L_j$-walks than any other class, i.e. $W(j,j) > W(i,j)$ for all $i\neq j$.
+  \item Average Condition Flip-flop (ACFF) -- Similar to all-subset flip-flop, except we compare the average value of the subsets.
+  \item Dominant Flip-flop (DFF) -- This is equivalent to ASFF and easier to state! For each node-class $C$, there exists a walk length $L$ for which the class $C$ has more $L$-walks than all other walk-classes combined.
+\end{enumerate}
+
+\textbf{Remarks:}
+\begin{itemize}
+  \item Dominant FF equivalent to All-subset FF
+  \item Dominant/All-subset implies Each-Class-Max.
+  \item Average Condition FF implies Pair-wise.
+  \item Each-Class-Max implies Pair-wise.
+  \item Dominant/All-subset is equivalent to the walk-class matrix being diagonally dominant!
+  \item On $2\times2$, PWFF = DFF/ASFF = ECM = ACFF .
+\end{itemize}
+
+
+\textbf{Average Condition flip-flop.}
+We say the graph satisfies the ACFF property if for each pair of subsets $S, T \neq \varnothing$ with $S \cap T = \varnothing$
+there exists a length $L$ such that the following (Average Condition) holds:
+\begin{equation}\label{eqn:average-condition}
+  \forall j , \quad \text{average}( W(T,L) ) \leq \text{average}( W(S,L) ).
+\end{equation}
+
+An equivalent, more efficient way of thinking about this condition is:
+For any subset $S$, there must exist a length $L$ such that $\text{average}( W(S,L) ) \geq \displaystyle\max_{j \notin S} \{  W(j,L)  \}$.
+
+In words: for every subset, there must be some walk length such that that subset's average number of walks is greater than or equal to any individual class's number of walks.
+
+Note that for ACFF we use ``$\leq$" instead of strict inequalities -- this is because of examples like this, in which the strict ACFF does not hold, but there is still a solution:
+
+$\mM = \bmat{ 3 & 1\\ 2 & 2 \\ 1 & 3}$.
+
+$\vx = [1; 1]$ is a solution to $\mM\vx = \ve$, but $\mM$ does not satisfy the ACFF strictly -- it satisfies it with the soft inequality $\leq$.
+
+
+\section{Errors found}
+
+The approaches I had been taking each had small errors in logic. Namely, for any argument about \emph{necessary} conditions for the existence of a deceptive function on $G$, I now believe I wasn't providing full enough context. To make clear what the error was, first we returned to a different phrasing of the originl problem:
+given a graph $G$ with adjacency matrix $\mA$ does there exist a postitive function $f(x) = \sum_{k=0}^{\infty} c_k x^k$ that is deceptive on $G$, i.e. $\diag( f(\mA) )  = $ a constant. Setting $\vf = \diag(f(\mA))$ and $\vvk{d}{k} = \diag( \mA^k )$, we are asking if there exists a sequence of positive coefficients $c_k$ such that $\vf = \sum_{k=0}^{\infty} c_k \vvk{d}{k}$.
+
+Because of the way functions behave on matrices, for any function $g(x)$ that is defined on a matrix $\mM$, there always exists a polynomial $p(x)$ with degree bounded by $n$ (the size of the square matrix $\mM$) such that $p(\mM) = f(\mM)$. I had believed this would enable us to restrict our attention to just the first $n$ terms $\vvk{d}{k}$ for $k=1,\cdots, n$ in our search for the answer to the question ``what are necessary and sufficient conditions for there to exist a deceptive function on $G$?", but the argument that I had to complete this simplification doesn't work (or, at least, it is not complete).
+
+So, we are back to considering the infinite case: when does there exist a sequence $c_k$ such that $\vf = \mD \vc$ is a constant vector (where here we use $\mD = [ \vvk{d}{1}, \vvk{d}{2}, \cdots ]$ i.e. a $n\times \mathbb{N}$ matrix, and $\vc = [ c_1, c_2, \cdots ]$ is an $\mathbb{N}\times 1$ vector. )
+
+There is, apparently, an infinite-dimensional version of Farka's Lemma...
+
+
+For the $k$-node-walk-class case, for now I believe we have to restrict ourselves to sufficient conditions.
+
+
+\section{Sufficient conditions for deception functions}
+
+Recalling the equations
+\begin{align}
+  \diag(f(\mA)) &= \sum_{k=0}^{\infty} c_k \diag(\mA^k) \\
+  \vf &= [ \vvk{d}{0}, \vvk{d}{1}, \cdots ] [ c_0; c_1; \cdots ] , \label{eqn:deceptive-function-vector-def}
+\end{align}
+ here we try to construct a finite version.
+We will attempt to construct a finite matrix $\mM$ whose columns are sums of ``equivalence classes" of the columns $\vvk{d}{k}$.
+First, assume we have restricted the vectors $\vvk{d}{k}$ to simply rows corresponding to the $K$ distinct node-walk-classes of the graph.
+Next we construct the equivalence classes of the columns $\vvk{d}{k}$. Because there are $K$ distinct node-walk-classes, there are exactly $K!$ different possible orderings on the integers $1:K$. For each such ordering, we create an equivalence class $C_j$ of the columns $\vvk{d}{t}$ as follows: for each $t = 0,1,\cdots$, we place column $\vvk{d}{t}$ in the equivalence class $C_{j(t)}$ corresponding to the ordering on $1:K$ that a (descending) sort on $\vvk{d}{t}$ induces. Suppose there are $T$ such equivalence classes, so that $\mM$ is $K \times T$,
+with column $\mM(:,j)$ being ``somehow composed of" all columns in the equivalence class $C_j$.
+If we assume that there \emph{does} exist a deceptive function, i.e. coefficients $c_k >0$ such that Equation~\eqref{eqn:deceptive-function-vector-def} holds, then we can form the columns of $\mM$ as follows: $\mM(:,j) = \sum_{t \in C_j}  c_t \vvk{d}{t}$.
+
+This construction guarantees a few things. First, the ordering on $1:K$ that defines the equivalence class $C_j$ will also apply to the column $\mM(:,j)$. Second,

@@ -1,0 +1,79 @@
+
+%%%%%%%
+%%%%%%%
+%%%%      SECTION HEADING
+%%%%%%%
+%%%%%%%
+
+\subsection{Notation}
+
+Let $G$ be a connected, standard graph with 2 walk-classes and that is \emph{not} walk-regular.
+The goal is to construct a positive function, $f(x) = \sum_{k=0}^{\infty} c_k x^k$ with $c_k > 0 $, such that $\vf = \diag(f(\mA))$ is constant.
+To proceed, we fix an arbitrary initial function, $g(x) = \sum_{k=0}^{\infty} g_k x^k$ with $g_k > 0 $ and set $\vg = \diag(g(\mA))$.
+Note that, because the graph has exactly two walk-classes, the diagonal of $g(\mA)$ will have exactly two values -- one value for each node class -- and that all nodes $i$ in class $\in C_j$ will have $g(\mA)_{ii} = g_j$ a constant associated with that walk-class.
+
+Let the classes be $C_1$ and $C_2$, and let their nodes have values in $\diag(g(\mA))$ equal to $g_1$ and $g_2$, respectively, i.e. for any nodes $i_1 \in C_1$ and $i_2 \in C_2$ we have $g(\mA)_{i_1,i_1} = g_1$ and $g(\mA)_{i_2,i_2} = g_2$.
+This also holds for the diagonals of the individual powers themselves, i.e. for each class $j=1,2$ and each power $k$ we know there is some constant $\gamma(j,k)$ such that $(\mA^k)_{i_j,i_j} = \gamma(j,k)$ for all nodes $i_j$ in class $C_j$.
+What this means is we can pick a single node representative for each node class, and discard the rest of the diagonal entries $(\mA^k)_{tt}$.
+In a sense, this allows us to forgot about the entire graph except for two nodes, call them 1 and 2, and their diagonal values in each power $k$, $(\mA^k)_{i_j,i_j}$.
+
+To proceed, suppose we identify a finite subset of powers (walk-lengths), $L_1, \cdots, L_t$, and look only at diagonal entries in those matrix powers, $(\mA^{L_s})_{i_j,i_j}$. (This corresponds to looking at the number of closed walks of lengths $L_1, \cdots, L_t$.)
+The idea is to construct coefficients $c_k$ so that the polynomial $p(x) = \sum_{k=1} c_k x^{L_k}$ is such that we can define a \emph{new} function, $f(x) = g(x) + p(x)$ that is deceptive on $G$, i.e. $f(\mA) = g(\mA) + p(\mA)$ has constant diagonal.
+To construct the appropriate coefficients $c_k$, we need to guarantee that $\vf = \diag(f(\mA))$ is constant, i.e.
+\begin{align}
+  \diag(g(\mA)) + \diag(p(\mA)) &= \vg + \sum_{k=1}^{t} c_k \diag(\mA^{L_k})
+\end{align}
+is a constant, call it $\gamma$.
+By our previous logic, we really only need to check this equality on two nodes: one node representing class $C_1$ and the other respresenting class $C_2$.
+In other words, we need coefficients $c_k$ and a constant $\gamma$ so that
+\begin{align}
+  g_1 + c_1 (\mA^{L_1})_{i_1,i_1} + \cdots + c_t (\mA^{L_t})_{i_1,i_1} &= \gamma \\
+  g_2 + c_1 (\mA^{L_1})_{i_2,i_2} + \cdots + c_t (\mA^{L_t})_{i_2,i_2} &= \gamma .
+\end{align}
+We want to turn this into a matrix equation to solve for $c_k$. Let $\vc = [ c_1, \cdots, c_t]^T$, and create a matrix $\mM$ with $M_{j,k} = (\mA^{L_k})_{i_j,i_j}$. Finally, set $\tilde{\vg} = [ g_1, g_2 ]^T$.%, and insert the column $\mM(:,s+1) = -\ve$, where $\ve$ is the vector of all 1s of appropriate length.
+Then the above system of equations can be represented by
+\begin{equation}\label{eqn:class-walk-matrix1}
+  \mM\vc = \gamma \ve - \tilde{\vg}.
+\end{equation}
+ The matrix $\mM$ is $2 \times t$, where $t$ is the number of coefficients $c_k$, which is the same as the number of different walk lengths $L_k$ (or terms $\mA^{L_k}$) that we are altering the coefficients of in $g(x)$ so that $f(\mA) = p(\mA) + g(\mA)$ has a constant diagonal.
+
+ The question, then, is what conditions do we need on $\mM$ to guarantee a solution $\vc$ exists to~\eqref{eqn:class-walk-matrix1} satisfying $\vc > 0$ ?
+ To answer the linear algebra question at face value, we will later describe and use Farkas's Lemma. But in this 2-class case, we will answer more directly.
+
+
+  \begin{theorem}[2-class deception]\label{thm:2class-deceptive}
+ For a non--walk-regular graph $G$ with 2 walk-classes, to be able to construct a function that is deceptive on $G$ it suffices for $G$ to have at least one walk length, $L_1$, where $(\mA^{L_1})_{i_1,i_1} > (\mA^{L_1})_{i_2,i_2}$, and at least one walk length $L_2$ where $(\mA^{L_2})_{i_1,i_1} < (\mA^{L_2})_{i_2,i_2}$. Furthermore, this condition is necessary.
+  \end{theorem}
+
+ To prove that the condition is necessary, note that if one node class, say $i_1$, is greater at every length, i.e. $(\mA^{k})_{i_1,i_1} > (\mA^{k})_{i_2,i_2}$, then no function can be constructed to be deceptive  on $G$ because for any set of positive coefficients $c_k$ we'd have $\sum_{k=0}^{\infty} c_k (\mA^{k})_{i_1,i_1} >  \sum_{k=0}^{\infty} c_k (\mA^{k})_{i_2,i_2}$. Thus, $g(\mA)_{i_1,i_1} > g(\mA)_{i_2,i_2}$, so $g$ does not have constant diagonal on $\mA$.
+
+ We have been referring to this behavior of different node classes having the most walks of different lengths as ``flip-flopping". In the 2-class case, ``flip-flopping" happens to correspond to the matrix $\mM$ being \emph{diagonally-dominant} (i.e. in each column, the diagonal entry is larger than the sum of the absolute values of all other entries, $|M_{ii}| > \sum_{j\neq i} |M_{ji}|$). Diagonal dominance guarantees invertibility, meaning flip-flopping in the 2-by-2 case guarantees that \eqref{eqn:class-walk-matrix1} has a unique solution $\vc$. To prove that the solution is also positive, we will inspect the matrix entries. (Aside: diagonal dominance is one potential property we are considering to impose on $\mM$ in the general case to ensure the existence of deceptive functions.)
+
+ \subsection{The construction}
+
+ To construct an explicit deceptive function we will solve Equation~\eqref{eqn:class-walk-matrix1} by assuming, per Theorem~\ref{thm:2class-deceptive}, that the underlying graph has at least one walk-length $L_1$ for which nodes of class 1 have more walks, $(\mA^{L_1})_{i_1,i_1} > (\mA^{L_1})_{i_2,i_2}$, and at least one walk-length $L_2$ for which the reverse is true, $(\mA^{L_2})_{i_1,i_1} < (\mA^{L_2})_{i_2,i_2}$.
+ Set $m_{j,k} = (\mA^{L_k})_{i_j,i_j}$ for $j=1,2$ and $k=1,2$. The choice of function $g(x)$ does not matter here, but for the sake of concreteness we will use $g(x) = \exp(x)$, and denote $g_1 = \exp(\mA)_{i_1,i_1}$ and $g_2 = \exp(\mA)_{i_2,i_2}$. Then we solve $\mM \vc = \tilde{\vg}$ by inverting $\mM = \bmat{m_{11} & m_{12} \\ m_{21} & m_{22} }$ via the standard formula:
+ \[
+ \vc = \tfrac{1}{m_{11}m_{22} - m_{12}m_{21}} \bmat{m_{22} & -m_{12} \\ -m_{21} & m_{11}} \bmat{\gamma - g_1 \\ \gamma - g_2}.
+ \]
+
+ Multiplication and slight algebraic rearranging yields the following:
+ \begin{align}
+   c_1 &= \gamma(m_{22} - m_{12}) - (m_{22}g_1 - m_{12} g_2 ) \label{eqn:defin2class-solution} \\
+   c_2 &= \gamma( m_{11} - m_{21} ) - (m_{11}g_2 - m_{21}g_1)
+ \end{align}
+
+This enables us to construct a \emph{positive} solution $\vc > 0$ for any input function $g(x)$ simply by choosing $\gamma$ large enough that both $c_1$ and $c_2$ are positive, as defined in Equations~\eqref{eqn:defin2class-solution}.
+We know this is possible because $m_{22}  > m_{12}$ is implied by the flip-flopping assumption we made, and so $(m_{22} - m_{12})$ is positive.
+Thus, regardless of the values of $g_j$, we can always choose $\gamma$ large enough that $\gamma(m_{22} - m_{12}) > (m_{22}g_1 - m_{12} g_2 )$, and hence $c_1 > 0$.
+Going through similar motions proves that $\gamma$ can be chosen large enough so that $c_2 > 0$ as well.
+(This again uses the assumption we made about the diagonal entries of $\mM$ being the largest entries in their columns.)
+
+Note that this strategy for producing a solution in fact produces an infinite number of solutions: a distinct solution is obtained by any value
+\[
+\gamma > \max\left\{  \frac{(m_{22}g_1 - m_{12} g_2 )}{(m_{22} - m_{12})} ~,~   \frac{(m_{11}g_2 - m_{21}g_1)}{( m_{11} - m_{21} )}  \right\}
+\]
+as all such values of $\gamma$ guarantee positive values for $c_1, c_2$.
+Moreover, we made no assumption about the initial function $g(x)$ (other than that it is a positive-power-series function), so this strategy for producing a solution (a function that is deceptive on $G$) in fact yields an infinite family of functions that are deceptive on $G$.% even if we put limits on $\gamma$.
+
+This completes the construction of a family of deceptive functions for a 2-class graph, assuming that the graph's two classes flip-flop.
