@@ -1,8 +1,8 @@
 """Calculate Linear Systems `Wx = e` for pyramid prisms."""
 
 # Imports
-import code.common.generators as gen
-import code.struckpod.walks as walks
+from code import generators as gen
+from code import polygraph
 import numpy as np
 from tabulate import tabulate
 
@@ -17,10 +17,10 @@ MAX_BCP_FACES = 6
 
 def _analyze(graph):
     # Get the walk object
-    w_obj = walks.walk_classes(graph)
+    w_obj = polygraph.walk_classes(graph)
 
     # Solve the linear system involving the eig_matrix
-    res = walks.positive_linear_system(w_obj, False, 1000)
+    res = polygraph.positive_linear_system(w_obj, False, 1000)
 
     # Check to see if x is positive
     return np.all(res.x >= 0)

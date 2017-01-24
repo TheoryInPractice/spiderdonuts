@@ -7,8 +7,8 @@ has a nonnegative solution to `Wx = gamma * e - g`.
 
 
 # Imports
-from code.common import generators as gen
-from code.struckpod import walks
+from code import generators as gen
+from code import polygraph
 from itertools import combinations_with_replacement
 from tabulate import tabulate
 import networkx as nx
@@ -23,10 +23,10 @@ graphs = {
 }
 
 flip_flops = [
-    walks.pair_wise_flip_flopping,
-    walks.average_condition_flip_flopping,
-    walks.dominant_flip_flopping,
-    walks.each_class_max
+    polygraph.pair_wise_flip_flopping,
+    polygraph.average_condition_flip_flopping,
+    polygraph.dominant_flip_flopping,
+    polygraph.each_class_max
 ]
 
 # Generate pairs
@@ -42,8 +42,8 @@ for g1, g2 in pairs:
     g = nx.cartesian_product(graphs[g1], graphs[g2])
 
     # Analyze
-    w_obj = walks.walk_classes(g)
-    res = walks.positive_linear_system(w_obj, False, 10)
+    w_obj = polygraph.walk_classes(g)
+    res = polygraph.positive_linear_system(w_obj, False, 10)
 
     # Create the result row
     results.append([

@@ -6,7 +6,7 @@ import networkx as nx
 import numpy as np
 import scipy as sp
 import scipy.linalg as lin
-import code.common.generators as gen
+import code.generators as gen
 
 import sys
 
@@ -23,7 +23,7 @@ def main():
     num_flake = 5
     outer_len = 3
     inner_len = 5
-    
+
     if num_args >= 2:
         num_flake = int(sys.argv[1])
     if num_args >= 3:
@@ -33,7 +33,7 @@ def main():
 
     print("\nParameter settings: number_flakes, outer-cycle length, innter_cycle length")
     print(" " + str(num_flake) + " " + str(outer_len) + " " + str(inner_len) )
-        
+
     G = gen.snowflakecycle(num_flake,inner_len,outer_len)
     AG = nx.to_numpy_matrix(G)
 
@@ -114,7 +114,7 @@ def main():
     print('\nDiagonal entries of our constructed function of this graph:')
     print(final_diag)
 
-    
+
 main()
 #if __name__ == '__main__':
 #    main()

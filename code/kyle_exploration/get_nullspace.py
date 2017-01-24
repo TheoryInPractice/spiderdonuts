@@ -1,8 +1,8 @@
-import common.generators as gen
+import generators as gen
 import networkx as nx
 G = gen.pyramid_prism(4,0)
 
-import struckpod.walks as wks
+import polygraph as wks
 walk_obj = wks.walk_classes(G)
 # W = walk_obj['uniq_matrix']
 W = walk_obj['diag_matrix']
