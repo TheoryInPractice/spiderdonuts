@@ -20,7 +20,7 @@ As part of this project we have developed some necessary and some sufficient con
 
 ### Checking for Deceptiveness - Not Deceptive
 
-```py
+```python
 # Import spiderdonuts modules
 from code import polygraph, generators as gen
 
@@ -36,7 +36,7 @@ polygraph.pair_wise_flip_flopping(walk_obj['eig_matrix'])
 
 ### Checking for Deceptiveness - Deceptive
 
-```py
+```python
 # Import spiderdonuts modules
 from code import polygraph, generators as gen
 
@@ -46,13 +46,13 @@ pyramid_prism = gen.pyramid_prism(4, 0)
 # Compute walk class info
 walk_obj = polygraph.walk_classes(pyramid_prism)
 
-# Check for a solution to the system (gamma * e) - g > 0
-polygraph.positive_linear_system(walk_obj, False, 100)
+# Check for a solution to the system Wx = (gamma * e) - g
+polygraph.positive_linear_system(walk_obj, False)
 ```
 
 ### Printing a Graph With Node IDs
 
-```py
+```python
 # Import spiderdonuts modules
 from code import graphs, generators as gen
 
@@ -64,7 +64,7 @@ graphs.draw_with_id(cd, 'out.png')
 ```
 ### Printing a Graph With Node Classes
 
-```py
+```python
 # Import spiderdonuts modules
 from code import graphs, polygraph, generators as gen
 
@@ -76,4 +76,20 @@ walk_obj = polygraph.walk_classes(cd)
 
 # Draw
 graphs.draw_with_category(walk_obj['graph'], 'out.png')
+```
+
+# Analyzing a Deceptive Spidertorus
+
+```python
+# Import spiderdonuts modules
+from code import polygraph, generators as gen
+
+# Generate a deceptive spider torus
+spidertorus_obj = gen.spider_torus(4, 2, [5, 3])
+
+# Compute walk class info
+walk_obj = polygraph.spider_torus_walk_classes(spidertorus_obj)
+
+# Check for a solution to the system Wx = (gamma * e) - g
+polygraph.positive_linear_system(walk_obj, False)
 ```

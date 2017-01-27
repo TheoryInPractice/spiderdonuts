@@ -301,7 +301,7 @@ def spider_torus_walk_classes(st_obj):
     }
 
 
-def positive_linear_system(w_obj, strict=True, delta=0):
+def positive_linear_system(w_obj, strict=True, epsilon=1e-10):
     """Solve a linear program.
 
     By default, the system attempts to find a strictly positive solution
@@ -318,26 +318,14 @@ def positive_linear_system(w_obj, strict=True, delta=0):
         Walk object returned by `walk_classes`
     strict : Boolean
         Whether or not to use strict equality (True by default)
-    delta : Number
-        Optional increment to the value gamma (Default 0).
-
-    Raises
-    ------
-    Exception
-        Raised if delta is less than 0
+    epsilon : Number
+        Small, nonzero number (default 1e-10)
 
     Returns
     -------
     Scipy Optimize Result
         The result from calling scipy.optimize.linprog
     """
-    # Raise exception of delta is invalid
-    if delta < 0:
-        raise Exception('Delta must be >= 0')
-
-    # Small "non-zero" value used for computing
-    epsilon = 1e-10
-
     # Get the reduced walk matrix
     if 'eig_matrix' in w_obj:
         w = w_obj['eig_matrix']
@@ -353,25 +341,29 @@ def positive_linear_system(w_obj, strict=True, delta=0):
         # Get the graph adjacency matrix
         A = nx.adjacency_matrix(w_obj['graph']).todense()
 
-        # Calcualte g
+        # Calcualte the diagonal matrix
         try:
             d = np.diag(sp.linalg.expm(A))
         except:
             d = np.diag(linalg.adhoc_expm(A))
 
         # Form g from the unique rows of d
-        g = [d[idx] for idx in w_obj['uniq_rows']]
-
-        # Calculate gamma as more than the largest
-        # entry in g so that (gamma * e) - g > 0
-        gamma = max(g) + epsilon + delta
+        g = np.matrix([d[idx] for idx in w_obj['uniq_rows']])
 
         # Parameter values
-        A_eq = w
-        c = np.ones(num_cols)
-        A_ub = -np.matrix(np.identity(num_cols))
-        b_ub = np.zeros(num_cols)
-        b_eq = (gamma * np.ones(num_rows)) - g
+        c = np.ones(num_cols + 1)
+        A_eq = np.concatenate((w, -np.ones((num_rows, 1))), axis=1)
+        A_ub = -np.identity(num_cols + 1)
+        b_eq = -g
+        b_ub = np.concatenate((np.zeros(num_cols), np.array([-epsilon])))
+
+        # return {
+        #     'c': c,
+        #     'A_eq': A_eq,
+        #     'A_ub': A_ub,
+        #     'b_eq': b_eq,
+        #     'b_ub': b_ub
+        # }
     else:
         # Get the number of rows and columns of w
         num_rows, num_cols = w.shape

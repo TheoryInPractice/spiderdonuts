@@ -395,7 +395,7 @@ def spider(degree, length):
 def spider_torus(degree, length, copies):
     """Create a torus of spider graphs.
 
-    A hyperchain is formed with the folling process:
+    A torus is formed with the folling process:
 
     Take `copies[0]` copies of a spider graph and link them
     together in a ring by connecting each node in the first
