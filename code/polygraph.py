@@ -132,6 +132,7 @@ def _flip_flop_subset(w):
     return None
 
 
+# TODO write warning here and readme that this is slow for large graphs O(n^4)
 def walk_classes(graph):
     """Analyze a networkx graph to determine its walk classes.
 
@@ -301,23 +302,16 @@ def spider_torus_walk_classes(st_obj):
     }
 
 
-def positive_linear_system(w_obj, strict=True, epsilon=1e-10):
+def positive_linear_system_check(w_obj, epsilon=1e-10):
     """Solve a linear program.
 
-    By default, the system attempts to find a strictly positive solution
+    The system attempts to find a strictly positive solution
     to the problem `Wx = e`.
-
-    If `strict=False`, the system will attempt to find a nonnegative
-    solution of the form `Wx = (gamma * e) - g` where `g = diag(expm(A))`,
-    limited to the entries corresponding to the unique classes of `w`,
-    and `(gamma * e) - g > 0`.
 
     Paremeters
     ----------
     w_obj : Dict
         Walk object returned by `walk_classes`
-    strict : Boolean
-        Whether or not to use strict equality (True by default)
     epsilon : Number
         Small, nonzero number (default 1e-10)
 
@@ -332,48 +326,77 @@ def positive_linear_system(w_obj, strict=True, epsilon=1e-10):
     else:
         w = w_obj['uniq_matrix']
 
-    # If not strict, find a nonnegative solution
-    if not strict:
-        # Take the subset of the matrix
-        w = _flip_flop_subset(w)
-        num_rows, num_cols = w.shape
-
-        # Get the graph adjacency matrix
-        A = nx.adjacency_matrix(w_obj['graph']).todense()
-
-        # Calcualte the diagonal matrix
-        try:
-            d = np.diag(sp.linalg.expm(A))
-        except:
-            d = np.diag(linalg.adhoc_expm(A))
-
-        # Form g from the unique rows of d
-        g = np.matrix([d[idx] for idx in w_obj['uniq_rows']])
-
-        # Parameter values
-        c = np.ones(num_cols + 1)
-        A_eq = np.concatenate((w, -np.ones((num_rows, 1))), axis=1)
-        A_ub = -np.identity(num_cols + 1)
-        b_eq = -g
-        b_ub = np.concatenate((np.zeros(num_cols), np.array([-epsilon])))
-    else:
-        # Get the number of rows and columns of w
-        num_rows, num_cols = w.shape
-
-        # Default parameter values
-        A_eq = w
-        c = np.ones(num_cols)
-        A_ub = -np.matrix(np.identity(num_cols))
-        b_ub = -np.ones(num_cols) * epsilon
-        b_eq = np.ones(num_rows)
+    # Get the number of rows and columns of w
+    num_rows, num_cols = w.shape
 
     # Return result
     return sp.optimize.linprog(
-        c=c,
-        A_ub=A_ub,
-        b_ub=b_ub,
-        A_eq=A_eq,
-        b_eq=b_eq
+        c=np.ones(num_cols),
+        A_ub=-np.matrix(np.identity(num_cols)),
+        b_ub=-np.ones(num_cols) * epsilon,
+        A_eq=w,
+        b_eq=np.ones(num_rows)
+    )
+
+
+def nonnegative_linear_system_check(w_obj, epsilon=1e-10, subset=False):
+    """Solve a linear program.
+
+    The system will attempt to find a nonnegative solution of the form
+    `Wx = (gamma * e) - g` where `g = diag(expm(A))`, limited to the entries
+    corresponding to the unique classes of `w`, and `(gamma * e) - g > 0`.
+
+    Paremeters
+    ----------
+    w_obj : Dict
+        Walk object returned by `walk_classes`
+    epsilon : Number
+        Small, nonzero number (default 1e-10)
+    subset: Boolean | List
+        If True, the minimal subset of the walk matrix which demonstrates the
+        same flip-flopping conditions will be used. If a List, the column
+        indices provided in the list will be used to form the subset. Otherwise
+        (False), no subsetting will be performed.
+
+    Returns
+    -------
+    Scipy Optimize Result
+        The result from calling scipy.optimize.linprog
+    """
+    # Get the reduced walk matrix
+    if 'eig_matrix' in w_obj:
+        w = w_obj['eig_matrix']
+    else:
+        w = w_obj['uniq_matrix']
+
+    # Take the subset of the matrix
+    if subset is True:
+        w = _flip_flop_subset(w)
+    elif isinstance(subset, list):
+        w = w[:, subset]
+
+    # Get the shape of w
+    num_rows, num_cols = w.shape
+
+    # Get the graph adjacency matrix
+    A = nx.adjacency_matrix(w_obj['graph']).todense()
+
+    # Calcualte the diagonal matrix
+    try:
+        d = np.diag(sp.linalg.expm(A))
+    except:
+        d = np.diag(linalg.adhoc_expm(A))
+
+    # Form g from the unique rows of d
+    g = np.matrix([d[idx] for idx in w_obj['uniq_rows']])
+
+    # Return result
+    return sp.optimize.linprog(
+        c=np.ones(num_cols + 1),
+        A_ub=-np.identity(num_cols + 1),
+        b_ub=np.concatenate((np.zeros(num_cols), np.array([-epsilon]))),
+        A_eq=np.concatenate((w, -np.ones((num_rows, 1))), axis=1),
+        b_eq=-g
     )
 
 

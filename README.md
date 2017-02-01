@@ -47,7 +47,7 @@ pyramid_prism = gen.pyramid_prism(4, 0)
 walk_obj = polygraph.walk_classes(pyramid_prism)
 
 # Check for a solution to the system Wx = (gamma * e) - g
-polygraph.positive_linear_system(walk_obj, False)
+polygraph.positive_linear_system_check(walk_obj)
 ```
 
 ### Printing a Graph With Node IDs
@@ -91,5 +91,5 @@ spidertorus_obj = gen.spider_torus(4, 2, [5, 3])
 walk_obj = polygraph.spider_torus_walk_classes(spidertorus_obj)
 
 # Check for a solution to the system Wx = (gamma * e) - g
-polygraph.positive_linear_system(walk_obj, False)
+polygraph.nonnegative_linear_system_check(walk_obj)
 ```
