@@ -132,7 +132,6 @@ def _flip_flop_subset(w):
     return None
 
 
-# TODO write warning here and readme that this is slow for large graphs O(n^4)
 def walk_classes(graph):
     """Analyze a networkx graph to determine its walk classes.
 
@@ -147,6 +146,8 @@ def walk_classes(graph):
     The unique rows of W share a 1:1 correspondence with the walk classes
     of a graph. After W is calculated, the graph is parsed and nodes labeled
     with their appropriate category, starting at 0.
+
+    Warning. This is slow for large graphs O(n^4).
 
     Parameters
     ----------

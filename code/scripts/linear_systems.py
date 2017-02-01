@@ -20,7 +20,7 @@ def _analyze(graph):
     w_obj = polygraph.walk_classes(graph)
 
     # Solve the linear system involving the eig_matrix
-    res = polygraph.positive_linear_system(w_obj, False, 1000)
+    res = polygraph.positive_linear_system_check(w_obj)
 
     # Check to see if x is positive
     return np.all(res.x >= 0)

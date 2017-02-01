@@ -18,6 +18,22 @@ As part of this project we have developed some necessary and some sufficient con
 
 ## Code Examples
 
+### Analyzing Walk Classes
+
+This is slow for large graphs O(n^4). For spider torus graphs, see the specialized
+spider_torus_walk_classes.
+
+```python
+# Import spiderdonuts modules
+from code import polygraph, generators as gen
+
+# Generate a pyramid prism
+pyramid_prism = gen.pyramid_prism()
+
+# Analyze walk classes
+polygraph.walk_classes(pyramid_prism)
+```
+
 ### Checking for Deceptiveness - Not Deceptive
 
 ```python
