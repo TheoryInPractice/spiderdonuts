@@ -356,14 +356,6 @@ def positive_linear_system(w_obj, strict=True, epsilon=1e-10):
         A_ub = -np.identity(num_cols + 1)
         b_eq = -g
         b_ub = np.concatenate((np.zeros(num_cols), np.array([-epsilon])))
-
-        # return {
-        #     'c': c,
-        #     'A_eq': A_eq,
-        #     'A_ub': A_ub,
-        #     'b_eq': b_eq,
-        #     'b_ub': b_ub
-        # }
     else:
         # Get the number of rows and columns of w
         num_rows, num_cols = w.shape
