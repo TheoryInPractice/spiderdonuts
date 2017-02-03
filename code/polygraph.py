@@ -236,7 +236,7 @@ def walk_classes(graph):
     }
 
 
-def spider_torus_walk_classes(st_obj):
+def spider_torus_walk_classes(st_obj, arbitrary_precision=False):
     """Analyze the walk classes of a spider torus.
 
     The walk classes of a spider torus are determined
@@ -249,6 +249,10 @@ def spider_torus_walk_classes(st_obj):
     ----------
     st_obj : dict
         A dict as returned by `gen.spider_torus`
+    arbitrary_precision : Boolean
+        Whether or not to compute the walk matrix using arbitrary
+        precision arithmetic. Using it is slow, but avoids numerical
+        difficulties. (Default False).
 
     Returns
     -------
@@ -272,7 +276,7 @@ def spider_torus_walk_classes(st_obj):
     # Get adjacency matrix
     adj = np.matrix(
         nx.adjacency_matrix(graph).todense(),
-        dtype=object
+        dtype=object if arbitrary_precision else np.float64
     )
 
     # Copy the adjacency matrix
