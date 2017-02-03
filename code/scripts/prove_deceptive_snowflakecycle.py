@@ -1,5 +1,10 @@
-"""Generate (5,5,3)-snowflakecycle, then generate coefficients proving deceptiveness.
-Call:  python3 -m prove_deceptive_snowflakecycle.py flake_num outer_len inner_len"""
+"""Generate a snowflakecycle, then prove its deceptiveness.
+
+Generates coefficients of a deceptive function.
+
+Call:
+python3 -m prove_deceptive_snowflakecycle.py flake_num outer_len inner_len
+"""
 
 # Imports
 import networkx as nx
@@ -7,22 +12,24 @@ import numpy as np
 import scipy as sp
 import scipy.linalg as lin
 import code.generators as gen
-
 import sys
+
 
 print("\nRunning prove_deceptive_snowflakecycle")
 
+
 def main():
     num_args = len(sys.argv)
-    if (num_args>4):
+    if (num_args > 4):
         print("No more than 3 arguments allowed")
         sys.exit(1)
 
     # Get graph and adj matrix
-    # so far, snowflakecycle(5,5,3) is the only setting that produces a deceptive graph.
+    # so far, snowflakecycle(5, 5, 3) is the only setting
+    # that produces a deceptive graph.
     num_flake = 5
-    outer_len = 3
     inner_len = 5
+    outer_len = 3
 
     if num_args >= 2:
         num_flake = int(sys.argv[1])
@@ -31,32 +38,34 @@ def main():
     if num_args >= 4:
         inner_len = int(sys.argv[3])
 
-    print("\nParameter settings: number_flakes, outer-cycle length, innter_cycle length")
-    print(" " + str(num_flake) + " " + str(outer_len) + " " + str(inner_len) )
+    print(
+        "\nParameter settings: number_flakes, "
+        "outer-cycle length, innter_cycle length"
+    )
+    print(" " + str(num_flake) + " " + str(outer_len) + " " + str(inner_len))
 
-    G = gen.snowflakecycle(num_flake,inner_len,outer_len)
+    G = gen.snowflakecycle(num_flake, inner_len, outer_len)
     AG = nx.to_numpy_matrix(G)
 
     # Build Walk-submatrix
-    inds = [0,1,2]
-    Ut = np.zeros((len(inds),4))
+    inds = [0, 1, 2]
+    Ut = np.zeros((len(inds), 4))
 
     A_temp = AG**2
     diag = np.diag(A_temp)
-    Ut[:,0] = np.squeeze(diag[inds])
+    Ut[:, 0] = np.squeeze(diag[inds])
 
     A_temp = AG**int(outer_len)
     diag = np.diag(A_temp)
-    Ut[:,1] = np.squeeze(diag[inds])
+    Ut[:, 1] = np.squeeze(diag[inds])
 
     A_temp = AG**int(inner_len)
     diag = np.diag(A_temp)
-    Ut[:,2] = np.squeeze(diag[inds])
+    Ut[:, 2] = np.squeeze(diag[inds])
 
     A_temp = AG**4
     diag = np.diag(A_temp)
-    Ut[:,3] = np.squeeze(diag[inds])
-
+    Ut[:, 3] = np.squeeze(diag[inds])
 
     Ut = np.matrix(Ut)
     print("\nUt")
@@ -65,18 +74,18 @@ def main():
     # Construct Linear Program
     num_rows, num_cols = Ut.shape
 
-    A_eq = np.zeros( (num_rows, num_cols+2) )
-    A_eq[:,0:num_cols] = Ut
-    A_eq[:,num_cols] = -np.squeeze(np.ones(shape=(num_rows,1)))
-    A_eq[:,-1] = -np.squeeze(np.zeros(shape=(num_rows,1)))
+    A_eq = np.zeros((num_rows, num_cols+2))
+    A_eq[:, 0:num_cols] = Ut
+    A_eq[:, num_cols] = -np.squeeze(np.ones(shape=(num_rows, 1)))
+    A_eq[:, -1] = -np.squeeze(np.zeros(shape=(num_rows, 1)))
     A_eq = np.matrix(A_eq)
 
-    num_rows,num_cols = np.shape(A_eq)
+    num_rows, num_cols = np.shape(A_eq)
     c = np.ones(num_cols)
 
-    A_ub = np.zeros( (num_rows+1, num_cols) )
-    A_ub[:,0:num_rows+1] = -np.identity(num_rows+1)
-    A_ub[0:3,-1] = np.squeeze(np.ones(shape=(num_rows,1)))
+    A_ub = np.zeros((num_rows+1, num_cols))
+    A_ub[:, 0:num_rows+1] = -np.identity(num_rows+1)
+    A_ub[0:3, -1] = np.squeeze(np.ones(shape=(num_rows, 1)))
     A_ub = np.matrix(A_ub)
 
     # Get diagonal of expm(A)
@@ -105,7 +114,8 @@ def main():
     print(opt_obj)
     # Successful termination means we have constructed a deceptive function
 
-    # Construct deceptive function using coefficients from the optimization problem
+    # Construct deceptive function using coefficients
+    # from the optimization problem
     x = opt_obj.x
     coeffs = np.asmatrix(x[0:-2])
     coeffs = coeffs.T
@@ -116,5 +126,5 @@ def main():
 
 
 main()
-#if __name__ == '__main__':
-#    main()
+# if __name__ == '__main__':
+#     main()
