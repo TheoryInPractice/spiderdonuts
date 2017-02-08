@@ -46,13 +46,13 @@ def _diag_matrix(graph, max_power, arbitrary_precision=False):
     diagonals = []
 
     # Get adjacency matrix
-    a_1 = nx.adjacency_matrix(graph).todense()
+    a_1 = sp.sprase.csr_matrix(nx.adjacency_matrix(graph))
 
     # Make a copy to accumulate the product of
     # the matrix from 2..n. Specify object
     # datatype to force numpy to use python's
     # default arbitrary precision integers.
-    adj = np.matrix(
+    adj = sp.sparse.csr_matrix(
         a_1.copy(),
         dtype=object if arbitrary_precision else np.float64
     )
@@ -295,8 +295,8 @@ def spider_torus_walk_classes(st_obj, arbitrary_precision=False):
     max_power = max(copies)
 
     # Get adjacency matrix
-    adj = np.matrix(
-        nx.adjacency_matrix(graph).todense(),
+    adj = sp.sparse.csr_matrix(
+        nx.adjacency_matrix(graph),
         dtype=object if arbitrary_precision else np.float64
     )
 
