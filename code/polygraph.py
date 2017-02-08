@@ -146,7 +146,7 @@ def _flip_flop_subset(w):
     return None
 
 
-def walk_classes(graph, max_power, arbitrary_precision):
+def walk_classes(graph, max_power=None, arbitrary_precision=False):
     """Analyze a networkx graph to determine its walk classes.
 
     Walk classes are computed as the distinct rows of the matrix
