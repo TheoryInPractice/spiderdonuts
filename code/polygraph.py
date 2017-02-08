@@ -68,7 +68,7 @@ def _diag_matrix(graph, max_power, arbitrary_precision=False):
         adj = adj.dot(a_1)
 
         # Get the diagonal of the matrix
-        diag = np.diagonal(adj)
+        diag = adj.diagonal()
 
         # Append to list of diagonals
         diagonals.append(diag)
@@ -313,7 +313,7 @@ def spider_torus_walk_classes(st_obj, arbitrary_precision=False):
         w = w.dot(adj)
 
         # Get the diagonal
-        diagonals.append(np.diagonal(w))
+        diagonals.append(w.diagonal())
 
     # Calculate the matrix of diagonals
     diag_matrix = np.matrix(diagonals).transpose()
