@@ -46,7 +46,7 @@ def _diag_matrix(graph, max_power, arbitrary_precision=False):
     diagonals = []
 
     # Get adjacency matrix
-    a_1 = sp.sprase.csr_matrix(nx.adjacency_matrix(graph))
+    a_1 = sp.sparse.csr_matrix(nx.adjacency_matrix(graph))
 
     # Make a copy to accumulate the product of
     # the matrix from 2..n. Specify object
