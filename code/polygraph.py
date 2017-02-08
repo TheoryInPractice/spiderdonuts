@@ -12,7 +12,7 @@ from code import linalg
 DECIMALS = 10
 
 
-def _diag_matrix(graph):
+def _diag_matrix(graph, max_power, arbitrary_precision=False):
     """Calculate the matrix of diagonals for a graph.
 
     The matrix of diagonals is an n x (n - 1) matrix
@@ -24,6 +24,13 @@ def _diag_matrix(graph):
     ----------
     graph : Networkx Graph
         A networkx graph
+    max_power: Number
+        An optional maximum power to use in determining the walk matrix
+        (default n).
+    arbitrary_precision: Boolean
+        Whether or not to compute the walk matrix using arbitrary
+        precision arithmetic. Using it is slow, but avoids numerical
+        difficulties. (Default False).
 
     Returns
     -------
@@ -45,10 +52,17 @@ def _diag_matrix(graph):
     # the matrix from 2..n. Specify object
     # datatype to force numpy to use python's
     # default arbitrary precision integers.
-    adj = np.matrix(a_1.copy(), dtype=object)
+    adj = np.matrix(
+        a_1.copy(),
+        dtype=object if arbitrary_precision else np.float64
+    )
 
-    # Calculate A**2 through A**n
-    for i in range(2, num_nodes + 1):
+    # Set maximum power to n if not specified
+    if not max_power:
+        max_power = num_nodes
+
+    # Calculate A**2 through max_power + 1
+    for i in range(2, max_power + 1):
 
         # Calculate nth adj matrix
         adj = adj.dot(a_1)
@@ -132,7 +146,7 @@ def _flip_flop_subset(w):
     return None
 
 
-def walk_classes(graph):
+def walk_classes(graph, max_power, arbitrary_precision):
     """Analyze a networkx graph to determine its walk classes.
 
     Walk classes are computed as the distinct rows of the matrix
@@ -153,6 +167,13 @@ def walk_classes(graph):
     ----------
     graph : Networkx Graph
         The networkx graph that will be analyzed.
+    max_power: Number
+        An optional maximum power to use in determining the walk matrix
+        (default n).
+    arbitrary_precision: Boolean
+        Whether or not to compute the walk matrix using arbitrary
+        precision arithmetic. Using it is slow, but avoids numerical
+        difficulties. (Default False).
 
     Returns
     -------
@@ -172,7 +193,7 @@ def walk_classes(graph):
                       `category` corresponding to the walk category computed
     """
     # Create `W` as the matrix of diagonals
-    W = _diag_matrix(graph)
+    W = _diag_matrix(graph, max_power, arbitrary_precision)
 
     # Get the eigenvalues from the graph adjacency matrix
     eigenvalues, eigenvectors = _eigenvalues(graph)
