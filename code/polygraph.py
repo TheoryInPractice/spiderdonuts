@@ -404,13 +404,22 @@ def nonnegative_linear_system_check(w_obj, epsilon=1e-10, subset=False):
     # Get the shape of w
     num_rows, num_cols = w.shape
 
-    # Get the graph adjacency matrix
-    A = nx.adjacency_matrix(w_obj['graph']).todense()
+    # A = nx.adjacency_matrix(w_obj['graph'])
+    A = sp.sparse.csr_matrix(
+        nx.adjacency_matrix(w_obj['graph'])
+    )
 
     # Calcualte the diagonal matrix
     try:
-        d = np.diag(sp.linalg.expm(A))
+        d = np.diag(
+            # NOT CORRECT YET
+            # convert 
+            sp.sparse.linalg.expm(A)
+        )
+        # d = np.diag(sp.linalg.expm(A))
     except:
+        # Get the graph adjacency matrix
+        A = nx.adjacency_matrix(w_obj['graph']).todense()
         d = np.diag(linalg.adhoc_expm(A))
 
     # Form g from the unique rows of d
