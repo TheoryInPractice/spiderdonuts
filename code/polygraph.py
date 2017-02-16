@@ -4,12 +4,17 @@
 import networkx as nx
 import numpy as np
 import scipy as sp
+import logging
 from itertools import chain, combinations
-from code import linalg
+from code import linalg, SPIDERDONUTS
 
 
 # Number of decimals used for floating point comparison
 DECIMALS = 10
+
+
+# Spiderdonuts logger
+logger = logging.getLogger(SPIDERDONUTS)
 
 
 def _diag_matrix(graph, max_power, arbitrary_precision=False):
@@ -61,6 +66,13 @@ def _diag_matrix(graph, max_power, arbitrary_precision=False):
     if not max_power:
         max_power = num_nodes
 
+    # Log start
+    logger.info(
+        'Calculating diagonals of powers of the '
+        'adjacency matrix in range 2..{}'
+        .format(5)
+    )
+
     # Calculate A**2 through max_power + 1
     for i in range(2, max_power + 1):
 
@@ -72,6 +84,9 @@ def _diag_matrix(graph, max_power, arbitrary_precision=False):
 
         # Append to list of diagonals
         diagonals.append(diag)
+
+    # Log end
+    logger.info('Finished calculating the diagonal matrix')
 
     # Return the matrix of diagonals
     return np.matrix(diagonals).transpose()
@@ -128,6 +143,9 @@ def _flip_flop_subset(w):
     # Get matrix shape
     rows, cols = w.shape
 
+    # Log start
+    logger.info('Searching for flip-flop subset')
+
     # Get list of lexicographically sorted combinations of indices
     # and test each of them. Return the subset that works.
     for indices in combinations(range(cols), rows):
@@ -140,6 +158,7 @@ def _flip_flop_subset(w):
 
         # Check for equivalence
         if np.all(original_ff == new_ff):
+            logger.info('Subset found')
             return w_sub
 
     # Return None as a default. Should never actually happen.
@@ -212,6 +231,9 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
     # Mapping of class label to a list of nodes in that class
     classes = {}
 
+    # Log start
+    logger.info('Processing reduced walk matrix')
+
     # Process unique elements
     for row, node in enumerate(graph.nodes()):
 
@@ -237,6 +259,7 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
         classes[mapping[bts]].append(node)
 
     # Create the unique matrix
+    logger.info('Reduced walk matrix complete')
     uniq_matrix = np.matrix(unique_rows, dtype=object)
 
     # Calculate number of classes
@@ -294,29 +317,8 @@ def spider_torus_walk_classes(st_obj, arbitrary_precision=False):
     # powers = [2] + copies
     max_power = max(copies)
 
-    # Get adjacency matrix
-    adj = sp.sparse.csr_matrix(
-        nx.adjacency_matrix(graph),
-        dtype=object if arbitrary_precision else np.float64
-    )
-
-    # Copy the adjacency matrix
-    w = adj.copy()
-
-    # List of all diagonals
-    diagonals = []
-
-    # Build up the list of diagonals
-    for k in range(2, max_power + 1):
-
-        # Take the matrix power
-        w = w.dot(adj)
-
-        # Get the diagonal
-        diagonals.append(w.diagonal())
-
-    # Calculate the matrix of diagonals
-    diag_matrix = np.matrix(diagonals).transpose()
+    # Generate the walk matrix
+    diag_matrix = _diag_matrix(graph, max_power, arbitrary_precision)
     uniq_matrix = diag_matrix[representatives]
 
     # Return output
@@ -404,23 +406,23 @@ def nonnegative_linear_system_check(w_obj, epsilon=1e-10, subset=False):
     # Get the shape of w
     num_rows, num_cols = w.shape
 
-    # A = nx.adjacency_matrix(w_obj['graph'])
-    A = sp.sparse.csr_matrix(
-        nx.adjacency_matrix(w_obj['graph'])
-    )
+    # Get the adjacency_matrix
+    A = sp.sparse.csc_matrix(nx.adjacency_matrix(w_obj['graph']))
 
     # Calcualte the diagonal matrix
     try:
-        d = np.diag(
-            # NOT CORRECT YET
-            # convert 
-            sp.sparse.linalg.expm(A)
+        logger.info('Calculating expm of sparse adjacency matrix')
+        d = sp.sparse.linalg.expm(A).diagonal()
+    except Exception as e:
+        logger.info(
+            'scypy.sparse.linalg.expm failed with exception {}, '
+            'running adhoc expm on dense walk matrix'
         )
-        # d = np.diag(sp.linalg.expm(A))
-    except:
-        # Get the graph adjacency matrix
-        A = nx.adjacency_matrix(w_obj['graph']).todense()
-        d = np.diag(linalg.adhoc_expm(A))
+        logger.warn(e)
+        d = linalg.adhoc_expm(A.todense()).diagonal()
+
+    # Log expm finish
+    logger.info('Expm calculated, checking linear system')
 
     # Form g from the unique rows of d
     g = np.matrix([d[idx] for idx in w_obj['uniq_rows']])

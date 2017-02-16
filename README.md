@@ -16,6 +16,28 @@ The main focus is understanding when a non--walk-regular graph can "appear to be
 
 As part of this project we have developed some necessary and some sufficient conditions for graphs to be deceptive, as well as algorithms for constructing deceptive functions in some circumstances. This repository includes codes both for generating classes of graphs, some of which we have verified to be deceptive, as well as for checking whether or not a given graph is deceptive.
 
+## Verbose Mode
+
+Several of the functions in Spiderdonuts can run slowly for larger graphs. When verbose mode is enabled, progress will be logged to standard output. To toggle verbose mode, use `code.verbose`.
+
+```python
+import code
+
+# Toggle On
+code.verbose(True)
+
+# Toggle Off
+code.verbose(False)
+```
+
+If running through Jupyter Notebook (IPython), the root python logger must be correctly configured to see logging per cell (within the notebook, logging will still go to standard output on the console jupyter was started from without configuration).
+
+```python
+import logging, code
+logging.basicConfig(format='[%(asctime)s] %(message)s')
+code.verbose(True)
+```
+
 ## Code Examples
 
 ### Analyzing Walk Classes

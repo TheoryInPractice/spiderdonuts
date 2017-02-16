@@ -4,10 +4,16 @@
 import networkx as nx
 import numpy as np
 import os
+import logging
+from code import SPIDERDONUTS
 
 
 # Determine the base path to the current directory
 BASE_PATH = os.path.dirname(os.path.abspath(__file__))
+
+
+# Spiderdonuts logger
+logger = logging.getLogger(SPIDERDONUTS)
 
 
 def abs_path(relative):
@@ -457,6 +463,9 @@ def spider_torus(degree, length, copies):
     # Iterate over each level, building up the resulting hyperchain
     for level in range(length):
 
+        # Log
+        logger.info('Generating level {} of the spider torus'.format(level))
+
         # Get the number of copies being made of the
         # previous level
         num_copies = copies[level]
@@ -492,6 +501,9 @@ def spider_torus(degree, length, copies):
         # Update the adjacency matrix to be the set of duplicates
         # plus the set of edges being added.
         adj = duplicates + edges
+
+    # Log completion
+    logger.info('Spider torus complete')
 
     # Return the graph formed from the final adjacency matrix
     return {
