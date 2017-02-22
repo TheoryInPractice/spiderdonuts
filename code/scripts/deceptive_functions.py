@@ -26,7 +26,7 @@ import numpy as np
 
 # Intermediate points
 NUM_POINTS = 100
-MAX_POWER = 6
+MAX_POWER = 7
 
 
 def deceptive(y, coefficients):
