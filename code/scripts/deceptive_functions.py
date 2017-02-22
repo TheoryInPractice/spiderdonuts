@@ -22,7 +22,11 @@ import logging
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import scipy as sp
+
+
+# Intermediate points
+NUM_POINTS = 100
+MAX_POWER = 6
 
 
 def deceptive(y, coefficients):
@@ -61,7 +65,7 @@ graphs_generators = [
 ]
 
 # Min lambda
-min_lambda = [('Graph', 'Min g(lambda)')]
+min_lambda = [('Graph', 'Min g(lambda)', 'Number of Coefficients')]
 
 # Analyze graphs
 for name, generator in graphs_generators:
@@ -79,7 +83,7 @@ for name, generator in graphs_generators:
         w_obj = polygraph.spider_torus_walk_classes(g)
     else:
         graph = g
-        w_obj = polygraph.walk_classes(g)
+        w_obj = polygraph.walk_classes(g, max_power=MAX_POWER)
 
     # Generate solutions to nonnegative linear system
     logger.info('Performing nonnegative system check')
@@ -93,20 +97,28 @@ for name, generator in graphs_generators:
         ))
     else:
         # Take solutions as coefficients
-        coefficients = res.x
+        coefficients = res.x[::-1]
 
         # Find graph eigenvalues
         logger.info('Finding graph eigenvalues')
-        eigenvalues, eigenvectors = sp.sparse.linalg.eigsh(
-            sp.sparse.csr_matrix(nx.adjacency_matrix(graph), dtype=sp.float64),
-        )
+        eigenvalues = np.linalg.eigvalsh(nx.adjacency_matrix(graph).todense())
+
+        # Key points
+        max_eig = max(eigenvalues)
+        min_eig = min(eigenvalues)
+        linspace = np.linspace(min_eig, max_eig, NUM_POINTS)
 
         # Evaluate the deceptive function at each eigenvalue
         logger.info('Evaluating deceptive function at eigenvalues')
-        results = [deceptive(x, coefficients[::-1]) for x in eigenvalues]
+        eig_results = [deceptive(x, coefficients) for x in eigenvalues]
+        lin_results = [deceptive(x, coefficients) for x in linspace]
 
         # Append min result to table output
-        min_lambda.append((name, min(results)))
+        min_result, min_idx = min(
+            (val, idx)
+            for (idx, val) in enumerate(eig_results)
+        )
+        min_lambda.append((name, min_result, len(coefficients)))
 
         # Generate plot
         logger.info('Generating (lambda, g(lambda)) plot')
@@ -114,7 +126,10 @@ for name, generator in graphs_generators:
         plt.suptitle(name)
         plt.xlabel('lambda (Eigenvalue)')
         plt.ylabel('g(lambda)')
-        plt.scatter(eigenvalues, results)
+        plt.scatter(eigenvalues, eig_results, marker='*', s=150)
+        plt.scatter(linspace, lin_results, marker='.')
+        plt.axvline(x=eigenvalues[min_idx], ymin=0, ymax=max(eig_results))
+        plt.axhline(y=min_result, xmin=0, xmax=max_eig)
         plt.savefig('docs/tables-and-figures/{}'.format(name))
         plt.close()
 
