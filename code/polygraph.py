@@ -427,11 +427,17 @@ def nonnegative_linear_system_check(w_obj, epsilon=1e-10, subset=False):
     # Form g from the unique rows of d
     g = np.matrix([d[idx] for idx in w_obj['uniq_rows']])
 
+    # Construct lower bound for x
+    lower = [
+        min(0, (epsilon - 1/sp.misc.factorial(x + 2)))
+        for x in range(num_cols)
+    ]
+
     # Return result
     return sp.optimize.linprog(
         c=np.ones(num_cols + 1),
         A_ub=-np.identity(num_cols + 1),
-        b_ub=np.concatenate((np.zeros(num_cols), np.array([-epsilon]))),
+        b_ub=np.concatenate((lower, np.array([-epsilon]))),
         A_eq=np.concatenate((w, -np.ones((num_rows, 1))), axis=1),
         b_eq=-g
     )
