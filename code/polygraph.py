@@ -11,6 +11,7 @@ from code import linalg, SPIDERDONUTS
 
 # Number of decimals used for floating point comparison
 DECIMALS = 10
+MAX_POWER = 14
 
 
 # Spiderdonuts logger
@@ -188,7 +189,8 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
         The networkx graph that will be analyzed.
     max_power: Number
         An optional maximum power to use in determining the walk matrix
-        (default n).
+        If none is specified, the maximum power used is the minimum of
+        the number of nodes in the graph and 14.
     arbitrary_precision: Boolean
         Whether or not to compute the walk matrix using arbitrary
         precision arithmetic. Using it is slow, but avoids numerical
@@ -211,6 +213,11 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
         graph       - A copy of the graph where each node has the property
                       `category` corresponding to the walk category computed
     """
+    if max_power is None:
+        max_power = min(len(graph.nodes()), MAX_POWER)
+    else:
+        logger.info('')
+
     # Create `W` as the matrix of diagonals
     W = _diag_matrix(graph, max_power, arbitrary_precision)
 
