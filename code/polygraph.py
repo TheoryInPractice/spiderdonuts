@@ -11,8 +11,13 @@ from code import linalg, SPIDERDONUTS
 
 # Number of decimals used for floating point comparison
 DECIMALS = 10
+
+# MAX_POWER is set to 14 because powers higher than this
+# can cause loss of precision in the entries of the
+# adjacency matrix A^power.
+# Of course, even powers less than 14 can cause such
+# loss of precision if the graph is big and dense enough.
 MAX_POWER = 14
-# KYLE: EXPLAIN WHY 14
 
 
 # Spiderdonuts logger
@@ -192,6 +197,12 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
         An optional maximum power to use in determining the walk matrix
         If none is specified, the maximum power used is the minimum of
         the number of nodes in the graph and 14.
+
+        MAX_POWER is set to 14 because powers higher than this
+        can cause loss of precision in the entries of the
+        adjacency matrix A^power.
+        Of course, even powers less than 14 can cause such
+        loss of precision if the graph is big and dense enough.
     arbitrary_precision: Boolean
         Whether or not to compute the walk matrix using arbitrary
         precision arithmetic. Using it is slow, but avoids numerical
@@ -216,13 +227,13 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
     """
     if max_power is None:
         max_power = min(len(graph.nodes()), MAX_POWER)
-        # MAX_POWER is set to 14 because powers higher than this
-        # can cause loss of precision in the entries of the
-        # adjacency matrix A^power.
-        # Of course, even powers less than 14 can cause such
-        # loss of precision if the graph is big and dense enough.
     else:
-        logger.warn('Settings of max_power larger than 14 are more likely to cause loss of precision. These numerical issues can cause the check to fail even cases when a smaller value of max_power might succeed. We recommend using caution when setting the value manually.')
+        logger.warn(
+            'Settings of max_power larger than 14 are more likely to cause '
+            'loss of precision. These numerical issues can cause the check to '
+            'fail even cases when a smaller value of max_power might succeed. '
+            'We recommend using caution when setting the value manually.'
+        )
 
     # Create `W` as the matrix of diagonals
     W = _diag_matrix(graph, max_power, arbitrary_precision)
@@ -330,8 +341,12 @@ def spider_torus_walk_classes(st_obj, arbitrary_precision=False):
     # powers = [2] + copies
     max_power = max(copies)
     if max_power > MAX_POWER:
-        logger.warn('Setting a number of copies to be larger than 14 is more likely to cause loss of precision in the computations. These numerical issues can cause the check to fail even if a solution exists, especially on larger, denser graphs.')
-        
+        logger.warn(
+            'Settings of max_power larger than 14 are more likely to cause '
+            'loss of precision. These numerical issues can cause the check to '
+            'fail even cases when a smaller value of max_power might succeed. '
+            'We recommend using caution when setting the value manually.'
+        )
     # Generate the walk matrix
     diag_matrix = _diag_matrix(graph, max_power, arbitrary_precision)
     uniq_matrix = diag_matrix[representatives]
