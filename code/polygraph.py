@@ -342,10 +342,11 @@ def spider_torus_walk_classes(st_obj, arbitrary_precision=False):
     max_power = max(copies)
     if max_power > MAX_POWER:
         logger.warn(
-            'Settings of max_power larger than 14 are more likely to cause '
-            'loss of precision. These numerical issues can cause the check to '
-            'fail even cases when a smaller value of max_power might succeed. '
-            'We recommend using caution when setting the value manually.'
+            'If input parameter copies has max(copies) > 14, this is more likely'
+            'to cause loss of precision. These numerical issues can cause the check to '
+            'fail even if the graph is actually deceptive. In this case, we recommend '
+            'setting input parameter arbitrary_precision = True to avoid these problems,'
+            'although this can cause the algorithm to run much more slowly.'
         )
     # Generate the walk matrix
     diag_matrix = _diag_matrix(graph, max_power, arbitrary_precision)
