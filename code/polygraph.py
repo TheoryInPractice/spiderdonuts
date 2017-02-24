@@ -12,6 +12,8 @@ from code import linalg, SPIDERDONUTS
 # Number of decimals used for floating point comparison
 DECIMALS = 10
 MAX_POWER = 14
+# for a justification of MAX_POWER, see the pdf in /docs/notes-walk-entropy
+
 
 # Spiderdonuts logger
 logger = logging.getLogger(SPIDERDONUTS)
