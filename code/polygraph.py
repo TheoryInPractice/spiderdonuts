@@ -12,8 +12,6 @@ from code import linalg, SPIDERDONUTS
 # Number of decimals used for floating point comparison
 DECIMALS = 10
 MAX_POWER = 14
-# KYLE: EXPLAIN WHY 14
-
 
 # Spiderdonuts logger
 logger = logging.getLogger(SPIDERDONUTS)
@@ -173,10 +171,7 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
     Walk classes are computed as the distinct rows of the matrix
     of diagonals.
 
-    The general algorithm is to compute A**2 through A**n where n
-    is the number of nodes in the graph. W, the matrix of diagonals,
-    is constructed as the matrix whose columns are the diagonals of
-    A**2 through A**n.
+    The general algorithm is to compute A**2 through A**max_power. W, the matrix of diagonals, is constructed as the matrix whose columns are the diagonals of A**2 through A**max_power.
 
     The unique rows of W share a 1:1 correspondence with the walk classes
     of a graph. After W is calculated, the graph is parsed and nodes labeled
@@ -191,7 +186,7 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
     max_power: Number
         An optional maximum power to use in determining the walk matrix
         If none is specified, the maximum power used is the minimum of
-        the number of nodes in the graph and 14.
+        the number of nodes in the graph and another value (usually near 14) computed based on the max degree of the graph.
     arbitrary_precision: Boolean
         Whether or not to compute the walk matrix using arbitrary
         precision arithmetic. Using it is slow, but avoids numerical
@@ -214,14 +209,15 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
         graph       - A copy of the graph where each node has the property
                       `category` corresponding to the walk category computed
     """
+    # Determine correct value for max_power
     if max_power is None:
-        max_power = min(len(graph.nodes()), MAX_POWER)
-        # MAX_POWER is set to 14 because powers higher than this
-        # can cause loss of precision in the entries of the
-        # adjacency matrix A^power.
-        # Of course, even powers less than 14 can cause such
-        # loss of precision if the graph is big and dense enough.
-    else:
+        degree_max = max( nx.degree(graph).values() )
+        k = 53 / (log(degree_max)/log(2))
+        # this value of k computed  to avoid numerical errors
+        # but MAX_POWER set as lowerbound to attempt to ensure that
+        # the linear system has large enough dimension to have a feasible point
+        max_power = min( len(graph.nodes()) ,  max( MAX_POWER,  k) )
+    elif max_power > 14:
         logger.warn('Settings of max_power larger than 14 are more likely to cause loss of precision. These numerical issues can cause the check to fail even cases when a smaller value of max_power might succeed. We recommend using caution when setting the value manually.')
 
     # Create `W` as the matrix of diagonals
@@ -329,9 +325,15 @@ def spider_torus_walk_classes(st_obj, arbitrary_precision=False):
     # Add 2 to the list of copies, to be used as powers
     # powers = [2] + copies
     max_power = max(copies)
-    if max_power > MAX_POWER:
-        logger.warn('Setting a number of copies to be larger than 14 is more likely to cause loss of precision in the computations. These numerical issues can cause the check to fail even if a solution exists, especially on larger, denser graphs.')
-        
+    degree_max = max( nx.degree(graph).values() )
+    k = 53 / (log(degree_max)/log(2))
+    temp_upperbound = min( len(graph.nodes()) ,  max( MAX_POWER,  k) )
+    # This value of k computed to avoid numerical errors.
+    # The value MAX_POWER is set as a lowerbound to attempt to ensure that
+    # the linear system has large enough dimension to have a feasible point.
+    if max_power > temp_upperbound:
+        logger.warn('Setting an entry of copies to be larger than 14 is more likely to cause loss of precision in the computations. These numerical issues can cause the check to fail even if a solution exists, especially on larger, denser graphs.')
+
     # Generate the walk matrix
     diag_matrix = _diag_matrix(graph, max_power, arbitrary_precision)
     uniq_matrix = diag_matrix[representatives]
