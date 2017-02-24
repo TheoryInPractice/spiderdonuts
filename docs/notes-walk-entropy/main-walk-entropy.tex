@@ -94,9 +94,16 @@ we guarantee
   \item  $k \leq 53 / \log_2(\dmax)$ holds for any graph with $\dmax \leq 14$ (to avoid numerical errors)
   \item  $k = 14$ on graphs with larger max degree (to attempt to ensure the linear system $\mW$ has feasible points).
 \end{itemize}
-We caution that, for larger graphs ( $n$ greater than a couple thousand), the nonnegative linear system check can still run into numerical issues regardless of the value of $k$, because our algorithm has to compute $\exp(\mA)$ to construct the right-hand-side of the linear program constraint equation $\mW\vx = \vg$. This matrix function calculation $\exp(\mA)$ is notoriously difficult on larger matrices~\cite{moler2003nineteen} (and even on some medium-sized matrices).
+We caution that, for larger graphs ($n$ greater than a couple thousand), the nonnegative linear system check can still run into numerical issues regardless of the value of $k$, because our algorithm has to compute $\exp(\mA)$ to construct the right-hand-side of the linear program constraint equation $\mW\vx = \vg$. This matrix function calculation $\exp(\mA)$ is notoriously difficult on larger matrices~\cite{moler2003nineteen} (and even on some medium-sized matrices).
 
 
+\section{Shape of deceptive functions, parity of polynomials}
+
+So far the deceptive functions we've created are of the form $h(x) = p(x) + \exp(x)$ for some polynomial $p(x)$. this has had the effect that the ``shape" of the plot of $h(x)$ depends on the parity of $p(x)$. When $p(x)$ is an odd degree polynomial, $h(x)$ is negative on some portion of the real line. When $p(x)$ is even degree, then $h(x)$ can be decreasing somewhere.
+
+This is interesting because our current hypothesis for ``Necessary Conditions for Honesty" include requiring that $f(x)$ is positive and increasing. The above properties of $h(x) = p(x) + \exp(x)$ guarantee that $h(x)$ would violate at least one of the necessary conditions: ``h(x) is positive" is violated when p(x) is odd degree (because $p(x) \rightarrow -\infty$ as $x \rightarrow -\infty$ whereas $\exp(x) \rightarrow 0$); ``h(x) is always increasing" is violated when $p(x)$ is even degree because $h'(x) = p'(x) + \exp(x)$ must be negative somewhere (by the same logic above that proved h(x) is negative somewhere due to the odd degree of $p(x)$ ).
+
+To clarify: these two conditions are not a characterization of honesty -- we are not claiming that every function that violates one of these conditions must necessarily be deceptive on \emph{some} graph. We are merely pointing out that, so far, the only honest function we know of ($\exp(x)$) is positive and increasing; and all functions we have constructed that are deceptive violate at least one of these two criteria -- so there seems to be an important connection.
 
 {\footnotesize
 \bibliographystyle{amsplain}
