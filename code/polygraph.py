@@ -5,7 +5,7 @@ import networkx as nx
 import numpy as np
 import scipy as sp
 import logging
-from itertools import chain, combinations
+from itertools import chain, combinations, permutations
 from code import linalg, SPIDERDONUTS
 
 
@@ -693,11 +693,6 @@ def average_condition_flip_flopping(W):
     the average number of walks of length L[x] in S is greater than the average
     number of walks of the same length in T.
 
-    A simpler, yet equivalent definition is that for every subset S, there is
-    some walk length L[x] such that the average number of walks in S is greater
-    than or equal to the maximum number of walks of any class in the compliment
-    of S. This is the condition that is checked to determine ACFF.
-
     Parameters
     ----------
     W : Numpy Matrix
@@ -726,29 +721,28 @@ def average_condition_flip_flopping(W):
         )
     ))
 
-    # For each subset, check that, for some walk length,
-    # its average value is bigger than the max in the
-    # compliment of the set
-    for subset in subsets:
+    # Check all possible pairs of subsets
+    # S1 should have at least one walk length for which
+    # its average number of walks of that length dominates
+    # the average number of walks of that length in s2..
+    for s1, s2 in permutations(subsets, 2):
 
         # Whether flip-flipping is found
         flip_flops = False
 
-        # Take the set compliment
-        compliment = classes - subset
-
-        # Check each walk length average vs max property
+        # Check each walk length average for dominance
         for walk in range(0, num_cols):
 
-            # Calculate average number of walks for the subset
-            average = sum([w[cls][walk] for cls in subset]) / len(subset)
+            # Calculate average number of walks for s1
+            a1 = sum([w[cls][walk] for cls in s1]) / len(s1)
 
-            # Calculate the max number of walks for the compliment
-            maximum = max([w[cls][walk] for cls in compliment])
+            # Calculate average number of walks for s2
+            a2 = sum([w[cls][walk] for cls in s2]) / len(s2)
 
-            # If the average is greater than the maximum
-            # there is flip-flopping, stop checking
-            if average >= maximum:
+            # If the average of s1 is greater than the average
+            # of s2, then this pair exhibits the sought flip-flopping
+            # property. Break and check the next pair.
+            if a1 > a2:
                 flip_flops = True
                 break
 
