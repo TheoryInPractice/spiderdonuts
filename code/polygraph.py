@@ -5,7 +5,7 @@ import networkx as nx
 import numpy as np
 import scipy as sp
 import logging
-from itertools import chain, combinations, permutations
+from itertools import chain, combinations
 from code import linalg, SPIDERDONUTS
 
 
@@ -287,20 +287,22 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
     if max_power is None:
 
         degree_max = max(nx.degree(graph).values())
-        k = 53 / (np.log(degree_max) / np.log(2))
+        k = int(53 / (np.log(degree_max) / np.log(2)))
 
         # this value of k computed  to avoid numerical errors
         # but MAX_POWER set as lowerbound to attempt to ensure that
         # the linear system has large enough dimension to have a feasible point
         max_power = min(len(graph.nodes()),  max(MAX_POWER,  k))
-    elif max_power > 14:
-        logger.warn(
+
+    if max_power > 14:
+        logger.warn((
+            'Max Power is set to: {}. '
             'Settings of max_power larger than 14 are more likely to cause '
             'loss of precision. These numerical issues can cause the check '
             'to fail even cases when a smaller value of max_power might '
             'succeed. We recommend using caution when setting the value '
             'manually.'
-        )
+        ).format(max_power))
 
     # Create `W` as the matrix of diagonals
     W = _diag_matrix(graph, max_power, arbitrary_precision)
@@ -417,19 +419,20 @@ def spider_torus_walk_classes(st_obj, arbitrary_precision=False):
     # powers = [2] + copies
     max_power = max(copies)
     degree_max = max(nx.degree(graph).values())
-    k = 53 / (np.log(degree_max) / np.log(2))
+    k = int(53 / (np.log(degree_max) / np.log(2)))
     temp_upperbound = min(len(graph.nodes()), max(MAX_POWER,  k))
 
     # This value of k computed to avoid numerical errors.
     # The value MAX_POWER is set as a lowerbound to attempt to ensure that
     # the linear system has large enough dimension to have a feasible point.
     if max_power > temp_upperbound:
-        logger.warn(
+        logger.warn((
+            'Max Power is set to: {}. '
             'Setting an entry of copies to be larger than 14 is more '
             'likely to cause loss of precision in the computations. These '
             'numerical issues can cause the check to fail even if a solution '
             'exists, especially on larger, denser graphs.'
-        )
+        ).format(max_power))
 
     # Generate the walk matrix
     diag_matrix = _diag_matrix(graph, max_power, arbitrary_precision)
@@ -689,7 +692,7 @@ def average_condition_flip_flopping(W):
     Average-Condtion flip-flopping is defined as:
 
     For all pairs of subsets (S, T) where S and T are not equal to the empty
-    set and do not intersect, the there exists a walk of length L[x] such that
+    set and do not intersect, there exists a walk of length L[x] such that
     the average number of walks of length L[x] in S is greater than the average
     number of walks of the same length in T.
 
@@ -712,43 +715,57 @@ def average_condition_flip_flopping(W):
     # Generate the set of classes
     classes = set([i for i in range(num_rows)])
 
-    # Generatae a list of subsets of classes not including
-    # the empty set or the original set
-    subsets = list(map(
+    # Iterable returning all possible subsets of classes
+    # not including the empty set or the original set
+    c1 = map(
         set,
         chain.from_iterable(
-            combinations(classes, i) for i in range(1, len(classes))
+            combinations(classes, i)
+            for i in range(1, len(classes))
         )
-    ))
+    )
 
-    # Check all possible pairs of subsets
-    # S1 should have at least one walk length for which
-    # its average number of walks of that length dominates
-    # the average number of walks of that length in s2..
-    for s1, s2 in permutations(subsets, 2):
+    # Check every subset
+    for s1 in c1:
 
-        # Whether flip-flipping is found
-        flip_flops = False
+        # Find the compliment of the subset
+        compliment = classes - s1
 
-        # Check each walk length average for dominance
-        for walk in range(0, num_cols):
+        # Iterable returning all possible subsets of classes
+        # not including the empty that do not intersect with s1
+        c2 = map(
+            set,
+            chain.from_iterable(
+                combinations(compliment, i)
+                for i in range(1, len(compliment) + 1)
+            )
+        )
 
-            # Calculate average number of walks for s1
-            a1 = sum([w[cls][walk] for cls in s1]) / len(s1)
+        # Check s1 against every non intersecting subset s2
+        for s2 in c2:
 
-            # Calculate average number of walks for s2
-            a2 = sum([w[cls][walk] for cls in s2]) / len(s2)
+            # Whether flip-flipping is found
+            flip_flops = False
 
-            # If the average of s1 is greater than the average
-            # of s2, then this pair exhibits the sought flip-flopping
-            # property. Break and check the next pair.
-            if a1 > a2:
-                flip_flops = True
-                break
+            # Check each walk length average for dominance
+            for walk in range(0, num_cols):
 
-        # No flip flopping was found, return
-        if not flip_flops:
-            return False
+                # Calculate average number of walks for s1
+                a1 = sum([w[cls][walk] for cls in s1]) / len(s1)
+
+                # Calculate average number of walks for s2
+                a2 = sum([w[cls][walk] for cls in s2]) / len(s2)
+
+                # If the average of s1 is greater than the average
+                # of s2, then this pair exhibits the sought flip-flopping
+                # property. Break and check the next pair.
+                if a1 > a2:
+                    flip_flops = True
+                    break
+
+            # No flip flopping was found, return
+            if not flip_flops:
+                return False
 
     # If no counter examples are found return true
     return True
