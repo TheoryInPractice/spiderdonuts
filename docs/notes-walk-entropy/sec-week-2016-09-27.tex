@@ -107,11 +107,11 @@ Since we have assumed $\mM$ does not satisfy ACFF, there must exist disjoint, no
   \end{equation}
   is positive, since   $\ave(\mM(S,j)) - \ave(\mM(T,j)) > 0$ follows from the fact that $\ave(\mM(T,j)) \lneq \ave(\mM(S,j))$ for all $j$.
 
-  Finally, we will show that column $j$ of the row vector $\vy^T\mM$ is nonnegative (i.e. $\vy^T\mM \geq 0$).
+  Finally, we will show that an arbitrary column, $j$, of the row vector $\vy^T\mM$ is nonnegative (i.e. $\vy^T\mM \geq 0$).
   Expanding $\vy = \tfrac{1}{|S|}\ve_S - \tfrac{1+\delta}{|T|}\ve_T$ and multiplying with column $j$ of $\mM$ we get
   \begin{align}
     (\vy^T\mM)_j &= \left(\tfrac{1}{|S|}\ve_S - \tfrac{1+\delta}{|T|}\ve_T\right)\mM(:,j) \\
-    &= \ave(\mM(S,j)) - (1+\delta)\ave(\mM(S,j)) \\
+    &= \ave(\mM(S,j)) - (1+\delta)\ave(\mM(T,j)) \\
     &= \ave(\mM(S,j)) - \ave(\mM(T,j)) - \delta \ave(\mM(T,j)).
   \end{align}
   By construction of $\delta$, we know that
@@ -121,9 +121,7 @@ Since we have assumed $\mM$ does not satisfy ACFF, there must exist disjoint, no
     &=  \ave(\mM(S,j)) - \ave(\mM(T,j))
   \end{align}
   which is always positive for all $j$ by our assumption that $\ave(\mM(S,j)) > \ave(\mM(T,j))$ for all $j$. Now since we have constructed $\delta$ so that
-  \[
-   \delta \ave(\mM(T,j)) \leq   \ave(\mM(S,j)) - \ave(\mM(T,j))
-  \]
+  $\delta \ave(\mM(T,j)) \leq   \ave(\mM(S,j)) - \ave(\mM(T,j))$ holds,
 we can upperbound our string of equalities above:
 \begin{align}
     (\vy^T\mM)_j &= \ave(\mM(S,j)) - \ave(\mM(T,j)) - \delta \ave(\mM(T,j)) \\
