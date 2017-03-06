@@ -11,21 +11,80 @@ from code import linalg, SPIDERDONUTS
 
 # Number of decimals used for floating point comparison
 DECIMALS = 10
+
+# For a justification of MAX_POWER, see the pdf in /docs/notes-walk-entropy
 MAX_POWER = 14
-# for a justification of MAX_POWER, see the pdf in /docs/notes-walk-entropy
 
 
 # Spiderdonuts logger
 logger = logging.getLogger(SPIDERDONUTS)
 
 
-def _diag_matrix(graph, max_power, arbitrary_precision=False):
+def _necessary_flip_flip_conditions_check(
+        w, full_columns, arbitrary_precision):
+    """Check whether or not a walk matrix satisfies necessary flip-flop conditions.
+
+    The following flip-flopping conditions are known to be necessary
+    1. pair-wise
+    2. average-condition
+
+    Parameters
+    ----------
+    w : Numpy Matrix
+        Walk matrix produced by a walk_classes method.
+    full_columns : Boolean
+        Whether or not the walk matrix was generated using the full
+        set of columns (2..num_nodes).
+    arbitrary_precision : Boolean
+        Whether or not the walk matrix was generated using
+        arbitrary precision arithmetic.
+
+    Returns
+    -------
+    Tuple
+        A tuple with the check for each necessary condition.
+    """
+
+    # Warning template string
+    failed = (
+        'Reduced walk matrix failed necessary flip-flopping check: {}. '
+        'A deceptive function cannot be generated for it.'
+    )
+
+    # Check
+    pw = pair_wise_flip_flopping(w)
+    ac = average_condition_flip_flopping(w)
+
+    # Warn if either check failed
+    if not pw:
+        logger.warn(failed.format('pair-wise flip-flopping'))
+    if not ac:
+        logger.warn(failed.format('average-condition flip-flopping'))
+
+    # Warn about columns and precision if checks failed
+    if not pw or not ac:
+        if not full_columns:
+            logger.warn(
+                'Reduced walk matrix was not generated using a full set of '
+                'columns. A deceptive function may exist for a full matrix.'
+            )
+        elif not arbitrary_precision:
+            logger.warn(
+                'Reduced walk matrix is not using infinite precision '
+                'arithmetic. It\'s possible the matrix is OK, but fails '
+                'the check due to numerical errors.'
+            )
+
+    # Return result
+    return (pw, ac)
+
+
+def _diag_matrix(graph, max_power=None, arbitrary_precision=False):
     """Calculate the matrix of diagonals for a graph.
 
     The matrix of diagonals is an n x (n - 1) matrix
-    containing the diagonals of A**2 - A**n where
-    A is the adjacency matrix of a graph and n is the
-    number of nodes in the graph.
+    containing the diagonals of A**2 - A**max_power where
+    A is the adjacency matrix of the graph.
 
     Parameters
     ----------
@@ -33,11 +92,12 @@ def _diag_matrix(graph, max_power, arbitrary_precision=False):
         A networkx graph
     max_power: Number
         An optional maximum power to use in determining the walk matrix
-        (default n).
+        (default n, the number of nodes in the graph).
     arbitrary_precision: Boolean
         Whether or not to compute the walk matrix using arbitrary
         precision arithmetic. Using it is slow, but avoids numerical
-        difficulties. (Default False).
+        difficulties. If arbitrary precision is used, calculations
+        will be performed on dense matrices. (Default False).
 
     Returns
     -------
@@ -49,33 +109,40 @@ def _diag_matrix(graph, max_power, arbitrary_precision=False):
     # Get the total number of nodes in the graph
     num_nodes = len(graph.nodes())
 
-    # List of all diagonals computed
-    diagonals = []
-
-    # Get adjacency matrix
-    a_1 = sp.sparse.csr_matrix(nx.adjacency_matrix(graph))
-
-    # Make a copy to accumulate the product of
-    # the matrix from 2..n. Specify object
-    # datatype to force numpy to use python's
-    # default arbitrary precision integers.
-    adj = sp.sparse.csr_matrix(
-        a_1.copy(),
-        dtype=object if arbitrary_precision else np.float64
-    )
-
     # Set maximum power to n if not specified
     if not max_power:
         max_power = num_nodes
+
+    # List of all diagonals computed
+    diagonals = []
+
+    # Get adjacency matrix as a scipy sparse csr matrix.
+    # Specify object datatype if arbitrary precision is
+    # True to force use of python's default arbitrary
+    # precision integers.
+    if not arbitrary_precision:
+        a_1 = sp.sparse.csr_matrix(
+            nx.adjacency_matrix(graph),
+            dtype=np.float64
+        )
+    else:
+        a_1 = np.matrix(
+            nx.adjacency_matrix(graph).todense(),
+            dtype=object
+        )
+
+    # Make a copy to accumulate the product of
+    # the matrix from 2..n.
+    adj = a_1.copy()
 
     # Log start
     logger.info(
         'Calculating diagonals of powers of the '
         'adjacency matrix in range 2..{}'
-        .format(5)
+        .format(max_power)
     )
 
-    # Calculate A**2 through max_power + 1
+    # Calculate A**2 through max_power
     for i in range(2, max_power + 1):
 
         # Calculate nth adj matrix
@@ -83,6 +150,8 @@ def _diag_matrix(graph, max_power, arbitrary_precision=False):
 
         # Get the diagonal of the matrix
         diag = adj.diagonal()
+        if type(diag) is not np.ndarray:
+            diag = diag.getA1()
 
         # Append to list of diagonals
         diagonals.append(diag)
@@ -173,7 +242,9 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
     Walk classes are computed as the distinct rows of the matrix
     of diagonals.
 
-    The general algorithm is to compute A**2 through A**max_power. W, the matrix of diagonals, is constructed as the matrix whose columns are the diagonals of A**2 through A**max_power.
+    The general algorithm is to compute A**2 through A**max_power. W, the
+    matrix of diagonals, is constructed as the matrix whose columns are the
+    diagonals of A**2 through A**max_power.
 
     The unique rows of W share a 1:1 correspondence with the walk classes
     of a graph. After W is calculated, the graph is parsed and nodes labeled
@@ -188,7 +259,8 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
     max_power: Number
         An optional maximum power to use in determining the walk matrix
         If none is specified, the maximum power used is the minimum of
-        the number of nodes in the graph and another value (usually near 14) computed based on the max degree of the graph.
+        the number of nodes in the graph and another value (usually near 14)
+        computed based on the max degree of the graph.
     arbitrary_precision: Boolean
         Whether or not to compute the walk matrix using arbitrary
         precision arithmetic. Using it is slow, but avoids numerical
@@ -213,14 +285,24 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
     """
     # Determine correct value for max_power
     if max_power is None:
-        degree_max = max( nx.degree(graph).values() )
-        k = 53 / (log(degree_max)/log(2))
+
+        degree_max = max(nx.degree(graph).values())
+        k = int(53 / (np.log(degree_max) / np.log(2)))
+
         # this value of k computed  to avoid numerical errors
         # but MAX_POWER set as lowerbound to attempt to ensure that
         # the linear system has large enough dimension to have a feasible point
-        max_power = min( len(graph.nodes()) ,  max( MAX_POWER,  k) )
-    elif max_power > 14:
-        logger.warn('Settings of max_power larger than 14 are more likely to cause loss of precision. These numerical issues can cause the check to fail even cases when a smaller value of max_power might succeed. We recommend using caution when setting the value manually.')
+        max_power = min(len(graph.nodes()),  max(MAX_POWER,  k))
+
+    if max_power > 14:
+        logger.warn((
+            'Max Power is set to: {}. '
+            'Settings of max_power larger than 14 are more likely to cause '
+            'loss of precision. These numerical issues can cause the check '
+            'to fail even cases when a smaller value of max_power might '
+            'succeed. We recommend using caution when setting the value '
+            'manually.'
+        ).format(max_power))
 
     # Create `W` as the matrix of diagonals
     W = _diag_matrix(graph, max_power, arbitrary_precision)
@@ -272,6 +354,15 @@ def walk_classes(graph, max_power=None, arbitrary_precision=False):
     # Create the unique matrix
     logger.info('Reduced walk matrix complete')
     uniq_matrix = np.matrix(unique_rows, dtype=object)
+
+    # Check uniq_matrix for necessary flip-flopping conditions
+    # This method call is used for its side effects, which
+    # log information to the end user.
+    _necessary_flip_flip_conditions_check(
+        uniq_matrix,
+        max_power is len(graph.nodes()),
+        arbitrary_precision
+    )
 
     # Calculate number of classes
     num_classes = len(mapping.keys())
@@ -327,18 +418,34 @@ def spider_torus_walk_classes(st_obj, arbitrary_precision=False):
     # Add 2 to the list of copies, to be used as powers
     # powers = [2] + copies
     max_power = max(copies)
-    degree_max = max( nx.degree(graph).values() )
-    k = 53 / (log(degree_max)/log(2))
-    temp_upperbound = min( len(graph.nodes()) ,  max( MAX_POWER,  k) )
+    degree_max = max(nx.degree(graph).values())
+    k = int(53 / (np.log(degree_max) / np.log(2)))
+    temp_upperbound = min(len(graph.nodes()), max(MAX_POWER,  k))
+
     # This value of k computed to avoid numerical errors.
     # The value MAX_POWER is set as a lowerbound to attempt to ensure that
     # the linear system has large enough dimension to have a feasible point.
     if max_power > temp_upperbound:
-        logger.warn('Setting an entry of copies to be larger than 14 is more likely to cause loss of precision in the computations. These numerical issues can cause the check to fail even if a solution exists, especially on larger, denser graphs.')
+        logger.warn((
+            'Max Power is set to: {}. '
+            'Setting an entry of copies to be larger than 14 is more '
+            'likely to cause loss of precision in the computations. These '
+            'numerical issues can cause the check to fail even if a solution '
+            'exists, especially on larger, denser graphs.'
+        ).format(max_power))
 
     # Generate the walk matrix
     diag_matrix = _diag_matrix(graph, max_power, arbitrary_precision)
     uniq_matrix = diag_matrix[representatives]
+
+    # Check uniq_matrix for necessary flip-flopping conditions
+    # This method call is used for its side effects, which
+    # log information to the end user.
+    _necessary_flip_flip_conditions_check(
+        uniq_matrix,
+        True,
+        arbitrary_precision
+    )
 
     # Return output
     return {
@@ -585,14 +692,9 @@ def average_condition_flip_flopping(W):
     Average-Condtion flip-flopping is defined as:
 
     For all pairs of subsets (S, T) where S and T are not equal to the empty
-    set and do not intersect, the there exists a walk of length L[x] such that
+    set and do not intersect, there exists a walk of length L[x] such that
     the average number of walks of length L[x] in S is greater than the average
     number of walks of the same length in T.
-
-    A simpler, yet equivalent definition is that for every subset S, there is
-    some walk length L[x] such that the average number of walks in S is greater
-    than or equal to the maximum number of walks of any class in the compliment
-    of S. This is the condition that is checked to determine ACFF.
 
     Parameters
     ----------
@@ -613,44 +715,57 @@ def average_condition_flip_flopping(W):
     # Generate the set of classes
     classes = set([i for i in range(num_rows)])
 
-    # Generatae a list of subsets of classes not including
-    # the empty set or the original set
-    subsets = list(map(
+    # Iterable returning all possible subsets of classes
+    # not including the empty set or the original set
+    c1 = map(
         set,
         chain.from_iterable(
-            combinations(classes, i) for i in range(1, len(classes))
+            combinations(classes, i)
+            for i in range(1, len(classes))
         )
-    ))
+    )
 
-    # For each subset, check that, for some walk length,
-    # its average value is bigger than the max in the
-    # compliment of the set
-    for subset in subsets:
+    # Check every subset
+    for s1 in c1:
 
-        # Whether flip-flipping is found
-        flip_flops = False
+        # Find the compliment of the subset
+        compliment = classes - s1
 
-        # Take the set compliment
-        compliment = classes - subset
+        # Iterable returning all possible subsets of classes
+        # not including the empty that do not intersect with s1
+        c2 = map(
+            set,
+            chain.from_iterable(
+                combinations(compliment, i)
+                for i in range(1, len(compliment) + 1)
+            )
+        )
 
-        # Check each walk length average vs max property
-        for walk in range(0, num_cols):
+        # Check s1 against every non intersecting subset s2
+        for s2 in c2:
 
-            # Calculate average number of walks for the subset
-            average = sum([w[cls][walk] for cls in subset]) / len(subset)
+            # Whether flip-flipping is found
+            flip_flops = False
 
-            # Calculate the max number of walks for the compliment
-            maximum = max([w[cls][walk] for cls in compliment])
+            # Check each walk length average for dominance
+            for walk in range(0, num_cols):
 
-            # If the average is greater than the maximum
-            # there is flip-flopping, stop checking
-            if average >= maximum:
-                flip_flops = True
-                break
+                # Calculate average number of walks for s1
+                a1 = sum([w[cls][walk] for cls in s1]) / len(s1)
 
-        # No flip flopping was found, return
-        if not flip_flops:
-            return False
+                # Calculate average number of walks for s2
+                a2 = sum([w[cls][walk] for cls in s2]) / len(s2)
+
+                # If the average of s1 is greater than the average
+                # of s2, then this pair exhibits the sought flip-flopping
+                # property. Break and check the next pair.
+                if a1 > a2:
+                    flip_flops = True
+                    break
+
+            # No flip flopping was found, return
+            if not flip_flops:
+                return False
 
     # If no counter examples are found return true
     return True
