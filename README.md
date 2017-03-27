@@ -6,7 +6,6 @@ In general, all code will be in Python interfacing with the networkx module.
 
 ## Table of Contents
 
-* [Reading Materials](reading-materials-overview.md)
 * [Code](code/README.md)
 
 ## Main research focuses
@@ -18,7 +17,7 @@ As part of this project we have developed some necessary and some sufficient con
 
 ## Verbose Mode
 
-Several of the functions in Spiderdonuts can run slowly for larger graphs. When verbose mode is enabled, progress will be logged to standard output. To toggle verbose mode, use `code.verbose`.
+Several of the functions in Spiderdonuts can be slow for graphs larger than one or two thousand nodes. When verbose mode is enabled, progress will be logged to standard output. To toggle verbose mode, use `code.verbose`.
 
 ```python
 import code
