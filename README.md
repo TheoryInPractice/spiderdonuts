@@ -1,3 +1,5 @@
+<img align="right" src="spiderdonuts-logo.png">
+
 # spiderdonuts
 
 Exploring deceptive graphs and deceptive functions.
