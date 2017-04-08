@@ -9,6 +9,7 @@ In general, all code will be in Python interfacing with the networkx module.
 ## Table of Contents
 
 * [Code](code/README.md)
+* [Reading Materials](reading-materials-overview.md)
 
 ## Main research focuses
 
