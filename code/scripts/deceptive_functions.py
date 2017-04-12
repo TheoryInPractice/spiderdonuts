@@ -1,3 +1,8 @@
+#
+# This file is part of spiderdonuts, https://github.com/TheoryInPractice/spiderdonuts/,
+# and is Copyright (C) North Carolina State University, 2017. It is licensed
+# under the three-clause BSD license; see LICENSE.
+#
 """Calculate deceptive functions for a set of graphs.
 
 A deceptive function is formed as g(lambda) = (e^lambda) + p(lambda), where
