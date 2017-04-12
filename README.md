@@ -2,9 +2,7 @@
 
 # spiderdonuts
 
-Exploring deceptive graphs and deceptive functions.
-
-In general, all code will be in Python interfacing with the networkx module.
+Research codes for exploring deceptive graphs and deceptive functions.
 
 ## Table of Contents
 
@@ -12,9 +10,6 @@ README
 * [Main Research Focuses](#main-research-focuses)
 * [Code](#code)
 * [Examples](#examples)
-
-Other
-* [Reading Materials](reading-materials-overview.md)
 
 ## Main Research Focuses
 
@@ -48,43 +43,6 @@ Updating dependencies with `pip`.
 $ pip3 freeze > requirements.txt
 ```
 
-### Standards
-
-Code should follow the [PEP8](https://www.python.org/dev/peps/pep-0008/) standards for code style.
-Using a linter like [flake8](http://flake8.readthedocs.io/en/latest/) to verify code meets PEP8
-standards is recommended.
-
-### Environment
-
-Developers are encouraged to use [virtualenv](https://virtualenv.pypa.io/en/stable/) to maintain a
-clean environment for developing python code.
-
-### Verbose Mode
-
-Several of the functions in Spiderdonuts can be slow for graphs larger than one or two thousand
-nodes. When verbose mode is enabled, progress will be logged to standard output. To toggle verbose
-mode, use `code.verbose`.
-
-```python
-import code
-
-# Toggle On
-code.verbose(True)
-
-# Toggle Off
-code.verbose(False)
-```
-
-If running through Jupyter Notebook (IPython), the root python logger must be correctly configured
-to see logging per cell (within the notebook, logging will still go to standard output on the
-console jupyter was started from without configuration).
-
-```python
-import logging, code
-logging.basicConfig(format='[%(asctime)s] %(message)s')
-code.verbose(True)
-```
-
 ### Overview
 
 Spiderdonuts is split into two main modules: `generators` and `polygraph`.
@@ -111,6 +69,32 @@ checking for deceptiveness.
 | dominant_flip_flopping | Check for dominant flip-flopping property |
 | average_condition_flip_flopping | Check for average-condition flip-flopping property |
 | each_class_max | Check for each-class-max property |
+
+### Verbose Mode
+
+Several of the functions in Spiderdonuts can be slow for graphs larger than one or two thousand
+nodes. When verbose mode is enabled, progress will be logged to standard output. To toggle verbose
+mode, use `code.verbose`.
+
+```python
+import code
+
+# Toggle On
+code.verbose(True)
+
+# Toggle Off
+code.verbose(False)
+```
+
+If running through Jupyter Notebook (IPython), the root python logger must be correctly configured
+to see logging per cell (within the notebook, logging will still go to standard output on the
+console jupyter was started from without configuration).
+
+```python
+import logging, code
+logging.basicConfig(format='[%(asctime)s] %(message)s')
+code.verbose(True)
+```
 
 ## Examples
 
