@@ -2,7 +2,9 @@
 
 # spiderdonuts
 
-Research codes for exploring deceptive graphs and deceptive functions.
+Exploring deceptive graphs and deceptive functions.
+
+In general, all code will be in Python interfacing with the networkx module.
 
 ## Table of Contents
 
@@ -10,6 +12,9 @@ README
 * [Main Research Focuses](#main-research-focuses)
 * [Code](#code)
 * [Examples](#examples)
+
+Other
+* [Reading Materials](reading-materials-overview.md)
 
 ## Main Research Focuses
 
@@ -43,32 +48,16 @@ Updating dependencies with `pip`.
 $ pip3 freeze > requirements.txt
 ```
 
-### Overview
+### Standards
 
-Spiderdonuts is split into two main modules: `generators` and `polygraph`.
+Code should follow the [PEP8](https://www.python.org/dev/peps/pep-0008/) standards for code style.
+Using a linter like [flake8](http://flake8.readthedocs.io/en/latest/) to verify code meets PEP8
+standards is recommended.
 
-`generators` can be used to return networx graphs, including the deceptive graphs that we found.
-More documentation may be found within the module, but a list of notable graph generators is below.
+### Environment
 
-* chamfered_dodecahedron
-* pyramid_prism
-* snowflakecycle
-* spider
-* spider_torus
-
-`polygraph` contains functions for analyzing graph walk-classes, checking flip-flop conditions, and
-checking for deceptiveness.
-
-| Function | Description |
-| -------- | ----------- |
-| walk_classes | Returns metadata about a graphs walk-classes |
-| spider_torus_walk_classes | A version of walk_classes optimized for spidertori |
-| positive_linear_system_check | Check for deceptiveness by solving for `Wx = e` |
-| nonnegative_linear_system_check | Check for deceptiveness by solving for `Wx = (gamma * e) - diag(expm(A))` |
-| pair_wise_flip_flopping | Check for pair-wise flip-flopping property |
-| dominant_flip_flopping | Check for dominant flip-flopping property |
-| average_condition_flip_flopping | Check for average-condition flip-flopping property |
-| each_class_max | Check for each-class-max property |
+Developers are encouraged to use [virtualenv](https://virtualenv.pypa.io/en/stable/) to maintain a
+clean environment for developing python code.
 
 ### Verbose Mode
 
@@ -95,6 +84,33 @@ import logging, code
 logging.basicConfig(format='[%(asctime)s] %(message)s')
 code.verbose(True)
 ```
+
+### Overview
+
+Spiderdonuts is split into two main modules: `generators` and `polygraph`.
+
+`generators` can be used to return networx graphs, including the deceptive graphs that we found.
+More documentation may be found within the module, but a list of notable graph generators is below.
+
+* chamfered_dodecahedron
+* pyramid_prism
+* snowflakecycle
+* spider
+* spider_torus
+
+`polygraph` contains functions for analyzing graph walk-classes, checking flip-flop conditions, and
+checking for deceptiveness.
+
+| Function | Description |
+| -------- | ----------- |
+| walk_classes | Returns metadata about a graphs walk-classes |
+| spider_torus_walk_classes | A version of walk_classes optimized for spidertori |
+| positive_linear_system_check | Check for deceptiveness by solving for `Wx = e` |
+| nonnegative_linear_system_check | Check for deceptiveness by solving for `Wx = (gamma * e) - diag(expm(A))` |
+| pair_wise_flip_flopping | Check for pair-wise flip-flopping property |
+| dominant_flip_flopping | Check for dominant flip-flopping property |
+| average_condition_flip_flopping | Check for average-condition flip-flopping property |
+| each_class_max | Check for each-class-max property |
 
 ## Examples
 
