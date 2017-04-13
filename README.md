@@ -2,9 +2,7 @@
 
 # spiderdonuts
 
-Exploring deceptive graphs and deceptive functions.
-
-In general, all code will be in Python interfacing with the networkx module.
+This project explores connections between walk-regularity and the behavior of functions on graphs.
 
 ## Table of Contents
 
@@ -12,15 +10,15 @@ README
 * [Main Research Focuses](#main-research-focuses)
 * [Code](#code)
 * [Examples](#examples)
-
-Other
-* [Reading Materials](reading-materials-overview.md)
+* [Dependencies](#dependencies)
+* [License](#license)
+* [Acknowledgments](#acknowledgments)
 
 ## Main Research Focuses
 
-The idea of "Walk Entropy" is concerned with the information about a graph encoded by the graph's
-walk structure. In this project, we study a graph's walk structure by looking at polynomials and
-functions of graph matrices.
+The idea of "Walk Entropy" measures how structured/symmetric/uniform a graph is in terms of its
+walk structure---a graph that has regular walk structure (i.e. a graph that is walk-regular) has maximum walk-entropy.
+In this project, we study the relationship of a graph's walk structure to the behavior of a special class of functions applied to the graph adjacency matrix.
 
 The main focus is understanding when a non--walk-regular graph can "appear to be" walk-regular. The
 adjacency matrix M of a walk-regular graph will always have constant diagonal, no matter what
@@ -31,33 +29,36 @@ graphs".
 
 As part of this project we have developed some necessary and some sufficient conditions for graphs
 to be deceptive, as well as algorithms for constructing deceptive functions in some circumstances.
-This repository includes codes both for generating classes of graphs, some of which we have verified
-to be deceptive, as well as for checking whether or not a given graph is deceptive.
+This repository includes codes for generating classes of graphs (some of which we have verified
+to be deceptive), checking whether or not a given graph meets our necessary criteria for deceptiveness, and for constructing deceptive functions.
+
 
 ## Code
 
-All code is written using python 3.5. Specific python dependencies are stored within `requirements.txt`.
+Spiderdonuts is split into two main modules: `generators` and `polygraph`.
 
-Installing python dependencies using `pip`.
-```bash
-$ pip3 install -r requirements.txt
-```
+The module `generators` contains functions for creating a number of different graphs (all networkx type objects), including the deceptive graphs that we found.
+More documentation may be found within the module, but a list of notable graph generators is below.
 
-Updating dependencies with `pip`.
-```bash
-$ pip3 freeze > requirements.txt
-```
+* chamfered_dodecahedron
+* pyramid_prism
+* snowflakecycle
+* spider
+* spider_torus
 
-### Standards
+The module `polygraph` contains functions for analyzing graph walk-classes, checking flip-flop conditions, and
+checking for deceptiveness.
 
-Code should follow the [PEP8](https://www.python.org/dev/peps/pep-0008/) standards for code style.
-Using a linter like [flake8](http://flake8.readthedocs.io/en/latest/) to verify code meets PEP8
-standards is recommended.
-
-### Environment
-
-Developers are encouraged to use [virtualenv](https://virtualenv.pypa.io/en/stable/) to maintain a
-clean environment for developing python code.
+| Function | Description |
+| -------- | ----------- |
+| walk_classes | Returns metadata about a graphs walk-classes |
+| spider_torus_walk_classes | A version of walk_classes optimized for spidertori |
+| positive_linear_system_check | Check for deceptiveness by solving for `Wx = e` |
+| nonnegative_linear_system_check | Check for deceptiveness by solving for `Wx = (gamma * e) - diag(expm(A))` |
+| pair_wise_flip_flopping | Check for pair-wise flip-flopping property |
+| dominant_flip_flopping | Check for dominant flip-flopping property |
+| average_condition_flip_flopping | Check for average-condition flip-flopping property |
+| each_class_max | Check for each-class-max property |
 
 ### Verbose Mode
 
@@ -84,33 +85,6 @@ import logging, code
 logging.basicConfig(format='[%(asctime)s] %(message)s')
 code.verbose(True)
 ```
-
-### Overview
-
-Spiderdonuts is split into two main modules: `generators` and `polygraph`.
-
-`generators` can be used to return networx graphs, including the deceptive graphs that we found.
-More documentation may be found within the module, but a list of notable graph generators is below.
-
-* chamfered_dodecahedron
-* pyramid_prism
-* snowflakecycle
-* spider
-* spider_torus
-
-`polygraph` contains functions for analyzing graph walk-classes, checking flip-flop conditions, and
-checking for deceptiveness.
-
-| Function | Description |
-| -------- | ----------- |
-| walk_classes | Returns metadata about a graphs walk-classes |
-| spider_torus_walk_classes | A version of walk_classes optimized for spidertori |
-| positive_linear_system_check | Check for deceptiveness by solving for `Wx = e` |
-| nonnegative_linear_system_check | Check for deceptiveness by solving for `Wx = (gamma * e) - diag(expm(A))` |
-| pair_wise_flip_flopping | Check for pair-wise flip-flopping property |
-| dominant_flip_flopping | Check for dominant flip-flopping property |
-| average_condition_flip_flopping | Check for average-condition flip-flopping property |
-| each_class_max | Check for each-class-max property |
 
 ## Examples
 
@@ -281,6 +255,7 @@ cd = gen.chamfered_dodecahedron()
 # Draw
 graphs.draw_with_id(cd, 'out.png')
 ```
+
 ### Printing a Graph With Node Classes
 
 ```python
@@ -296,3 +271,37 @@ walk_obj = polygraph.walk_classes(cd)
 # Draw
 graphs.draw_with_category(walk_obj['graph'], 'out.png')
 ```
+
+## Dependencies
+
+All code is compatible with python 3.5. Specific dependencies are listed in `requirements.txt`.
+
+Install python dependencies using `pip`:
+```bash
+$ pip3 install -r requirements.txt
+```
+
+Updating dependencies with `pip`:
+```bash
+$ pip3 freeze > requirements.txt
+```
+
+## License
+
+<!---
+**Important**: spiderdonuts is *research software*, so you should cite us when you use it in scientific publications! Please see the CITATION file for citation information.
+[![DOI](https://zenodo.org/...)](https://zenodo.org/badge/...)
+
+--> 
+
+Spiderdonuts is released under the BSD license; see the LICENSE file.
+Distribution, modification and redistribution, and incorporation into other
+software is allowed.
+
+
+## Acknowledgements
+
+Development of the spiderdonuts software package was funded in part by
+the [Gordon & Betty Moore Foundation Data-Driven Discovery Initiative](https://www.moore.org/programs/science/data-driven-discovery),
+through a [DDD Investigator Award](https://www.moore.org/programs/science/data-driven-discovery/investigators)
+to Blair D. Sullivan ([grant GBMF4560](https://www.moore.org/grants/list/GBMF4560)). 
