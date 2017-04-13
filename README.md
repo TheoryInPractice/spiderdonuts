@@ -37,14 +37,7 @@ to be deceptive), checking whether or not a given graph meets our necessary crit
 
 Spiderdonuts is split into two main modules: `generators` and `polygraph`.
 
-The module `generators` contains functions for creating a number of different graphs (all networkx type objects), including the deceptive graphs that we found.
-More documentation may be found within the module, but a list of notable graph generators is below.
-
-* chamfered_dodecahedron
-* pyramid_prism
-* snowflakecycle
-* spider
-* spider_torus
+The module `generators` contains functions for creating a number of different graphs (all networkx type objects), including the deceptive graphs that we found. See [Examples](#examples) below for examples of how to call some of the graph generator functions in `generators`.
 
 The module `polygraph` contains functions for analyzing graph walk-classes, checking flip-flop conditions, and
 checking for deceptiveness.
