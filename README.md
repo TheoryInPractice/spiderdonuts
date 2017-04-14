@@ -12,7 +12,7 @@ README
 * [Examples](#examples)
 * [Dependencies](#dependencies)
 * [License](#license)
-* [Acknowledgments](#acknowledgments)
+* [Acknowledgements](#acknowledgements)
 
 ## Main Research Focuses
 
@@ -285,7 +285,7 @@ $ pip3 freeze > requirements.txt
 **Important**: spiderdonuts is *research software*, so you should cite us when you use it in scientific publications! Please see the CITATION file for citation information.
 [![DOI](https://zenodo.org/...)](https://zenodo.org/badge/...)
 
---> 
+-->
 
 Spiderdonuts is released under the BSD license; see the LICENSE file.
 Distribution, modification and redistribution, and incorporation into other
@@ -297,4 +297,4 @@ software is allowed.
 Development of the spiderdonuts software package was funded in part by
 the [Gordon & Betty Moore Foundation Data-Driven Discovery Initiative](https://www.moore.org/programs/science/data-driven-discovery),
 through a [DDD Investigator Award](https://www.moore.org/programs/science/data-driven-discovery/investigators)
-to Blair D. Sullivan ([grant GBMF4560](https://www.moore.org/grants/list/GBMF4560)). 
+to Blair D. Sullivan ([grant GBMF4560](https://www.moore.org/grants/list/GBMF4560)).
