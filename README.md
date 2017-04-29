@@ -8,9 +8,9 @@ This project explores connections between walk-regularity and the behavior of fu
 
 README
 * [Main Research Focuses](#main-research-focuses)
+* [Dependencies](#dependencies)
 * [Code](#code)
 * [Examples](#examples)
-* [Dependencies](#dependencies)
 * [License](#license)
 * [Acknowledgements](#acknowledgements)
 
@@ -32,6 +32,19 @@ to be deceptive, as well as algorithms for constructing deceptive functions in s
 This repository includes codes for generating classes of graphs (some of which we have verified
 to be deceptive), checking whether or not a given graph meets our necessary criteria for deceptiveness, and for constructing deceptive functions.
 
+## Dependencies
+
+All code is compatible with python 3.5. Specific dependencies are listed in `requirements.txt`.
+
+Install python dependencies using `pip`:
+```bash
+$ pip3 install -r requirements.txt
+```
+
+Updating dependencies with `pip`:
+```bash
+$ pip3 freeze > requirements.txt
+```
 
 ## Code
 
@@ -263,20 +276,6 @@ walk_obj = polygraph.walk_classes(cd)
 
 # Draw
 graphs.draw_with_category(walk_obj['graph'], 'out.png')
-```
-
-## Dependencies
-
-All code is compatible with python 3.5. Specific dependencies are listed in `requirements.txt`.
-
-Install python dependencies using `pip`:
-```bash
-$ pip3 install -r requirements.txt
-```
-
-Updating dependencies with `pip`:
-```bash
-$ pip3 freeze > requirements.txt
 ```
 
 ## License
