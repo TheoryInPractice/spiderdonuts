@@ -88,8 +88,8 @@ def _diag_matrix(graph, max_power=None, arbitrary_precision=False):
     """Calculate the matrix of diagonals for a graph.
 
     The matrix of diagonals is an n x (n - 1) matrix
-    containing the diagonals of A**2 - A**max_power where
-    A is the adjacency matrix of the graph.
+    containing the diagonals of A**2 through A**max_power,
+    where A is the adjacency matrix of the graph.
 
     Parameters
     ----------
