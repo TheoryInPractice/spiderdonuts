@@ -49,7 +49,7 @@ def deceptive(y, coefficients):
     Number
         e^y + coefficients[0]*y^2 + ... coefficients[k-1]*y^k
     """
-    poly = np.poly1d(np.concatenate(([0, 0], coefficients)))
+    poly = np.poly1d(np.concatenate((coefficients, [0, 0])))
     return exp(y) + np.polyval(poly, y)
 
 
