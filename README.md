@@ -34,20 +34,6 @@ to be deceptive), checking whether or not a given graph meets our necessary crit
 
 ## Dependencies
 
-All code is compatible with python 3.5. Specific dependencies are listed in `requirements.txt`.
-
-Install python dependencies using `pip`:
-```bash
-$ pip3 install -r requirements.txt
-```
-
-Updating dependencies with `pip`:
-```bash
-$ pip3 freeze > requirements.txt
-```
-
-## Dependencies
-
 To use the spiderdonuts repo, all that is required is a compatible version of python and a few python packages.
 We can verify all code in the spiderdonuts repo is compatible with python 3.5, but any python 3.X should work.
 Specific dependencies are listed in `requirements.txt`.
@@ -66,7 +52,8 @@ Spiderdonuts is split into two main modules: `generators` and `polygraph`.
 The module `generators` contains functions for creating a number of different graphs (all networkx type objects), including the deceptive graphs that we found. [Examples](#examples) below shows how to use a number of functions in `generators` to create graphs, including graphs of the families we designed in our search for deceptive graphs.
 
 The module `polygraph` contains functions for computing walk-classes, checking flip-flop conditions, and
-checking for deceptiveness of an input graph. We give examples of usage in [Examples](#examples) below. For in-depth details on individual functions, see their documentation in `/code/polygraph.py`. Here is a brief overview: 
+checking for deceptiveness of an input graph. We give examples of usage in [Examples](#examples) below. For in-
+depth details on individual functions, see their documentation in `/code/polygraph.py`. Here is a brief overview:
 
 | Function | Description |
 | -------- | ----------- |
@@ -343,7 +330,9 @@ The failure of the optimization program, and hence the nonnegative linear system
 
 ### Analyzing a Deceptive Spidertorus
 
-The spidertorus graphs we designed grow large rather quickly, but they are sparse and specially structured graphs. We designed special functions to analyze their walk classes efficiently. Here is an example of how to efficiently compute the walk classes of a spidertorus graph, and use the walk class information to check for deceptiveness.
+The spidertorus graphs we designed grow large rather quickly, but they are sparse and specially structured graphs. We designed special functions to compute their walk classes and analyze their deceptiveness efficiently.
+
+Here is an example of how to efficiently compute the walk classes of a spidertorus graph, and use the walk class information to check for deceptiveness. This is the spidertorus graph from Figure 1 in the paper *When Centrality Measures Deceive Us* by Eric Horton, Kyle Kloster, and Blair D. Sullivan, and establishes deceptiveness using Corollary 3.6 from that manuscript.
 
 ```python
 # Import spiderdonuts modules
