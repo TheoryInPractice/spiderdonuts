@@ -359,6 +359,55 @@ def snowflakecycle(flake_number=5, inner_cycle=5, outer_cycle=3):
     return nx.from_numpy_matrix(AG)
 
 
+def KKS_graph( clique_size=4, num_cliques=5, silent=True ):
+    """Create a networkx version of the KKS graph G(clique_size, num_cliques)
+
+    Parameters
+    ----------
+    clique_size: positive integer
+        The number of nodes in each clique of the G(clique_size, num_cliques) graph
+
+    num_cliques: positive integer
+        The number of cliques in the G(clique_size, num_cliques) graph
+
+    Returns
+    -------
+    Networkx graph
+        The KKS graph G(clique_size, num_cliques)
+    """
+
+    node_list = []
+    for j in range(0, (num_cliques+1)*clique_size ):
+        node_list.append(j)
+
+    inner_nodes = node_list[-clique_size:]
+
+    if not silent:
+        print("Clique nodes: ", node_list[:-clique_size])
+        print("Independent set: ", inner_nodes)
+
+    edge_list = []
+
+    # Add edges fow the cliques
+    for which_clique in range(0, num_cliques):
+        first_node = which_clique*clique_size
+        last_node = first_node + clique_size
+        for endpoint_a in range(first_node, last_node):
+            for endpoint_b in range(endpoint_a+1, last_node):
+                edge_list.append((endpoint_a, endpoint_b))
+
+    # Now add perfect matching from inner nodes to outer nodes
+    for idx, inner_node in enumerate(inner_nodes):
+        for which_clique in range(0, num_cliques):
+            edge_list.append((inner_node, clique_size*which_clique+idx))
+
+
+    G = nx.Graph()
+    G.add_nodes_from(node_list)
+    G.add_edges_from(edge_list)
+    return G
+
+
 def spider(degree, length):
     """Create a spider graph.
 
