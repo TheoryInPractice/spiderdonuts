@@ -1,5 +1,6 @@
 #
-# This file is part of spiderdonuts, https://github.com/TheoryInPractice/spiderdonuts/,
+# This file is part of spiderdonuts,
+#  https://github.com/TheoryInPractice/spiderdonuts/,
 # and is Copyright (C) North Carolina State University, 2017. It is licensed
 # under the three-clause BSD license; see LICENSE.
 #
@@ -359,13 +360,14 @@ def snowflakecycle(flake_number=5, inner_cycle=5, outer_cycle=3):
     return nx.from_numpy_matrix(AG)
 
 
-def KKS_graph( clique_size=4, num_cliques=5, silent=True ):
+def kks_graph(clique_size=4, num_cliques=5, silent=True):
     """Create a networkx version of the KKS graph G(clique_size, num_cliques)
 
     Parameters
     ----------
     clique_size: positive integer
-        The number of nodes in each clique of the G(clique_size, num_cliques) graph
+        The number of nodes in each clique of
+        the graph G(clique_size, num_cliques)
 
     num_cliques: positive integer
         The number of cliques in the G(clique_size, num_cliques) graph
@@ -377,7 +379,7 @@ def KKS_graph( clique_size=4, num_cliques=5, silent=True ):
     """
 
     node_list = []
-    for j in range(0, (num_cliques+1)*clique_size ):
+    for j in range(0, (num_cliques+1)*clique_size):
         node_list.append(j)
 
     inner_nodes = node_list[-clique_size:]
@@ -400,7 +402,6 @@ def KKS_graph( clique_size=4, num_cliques=5, silent=True ):
     for idx, inner_node in enumerate(inner_nodes):
         for which_clique in range(0, num_cliques):
             edge_list.append((inner_node, clique_size*which_clique+idx))
-
 
     G = nx.Graph()
     G.add_nodes_from(node_list)
