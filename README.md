@@ -11,6 +11,7 @@ README
 * [Dependencies](#dependencies)
 * [Code](#code)
 * [Examples](#examples)
+* [Reproducing results from paper](#reproducing-results-from-paper)
 * [License](#license)
 * [Acknowledgements](#acknowledgements)
 
@@ -478,7 +479,6 @@ As noted in our code examples above, the optimization returning `True` for succe
 Spiderdonuts is released under the BSD license; see the LICENSE file.
 Distribution, modification and redistribution, and incorporation into other
 software is allowed.
-
 
 
 ## Acknowledgements
