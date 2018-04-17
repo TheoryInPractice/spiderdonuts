@@ -31,7 +31,7 @@ def _necessary_flip_flip_conditions_check(
 
     The following flip-flopping conditions are known to be necessary
     1. pair-wise
-    2. average-condition
+    2. set-average
 
     Parameters
     ----------
@@ -58,13 +58,13 @@ def _necessary_flip_flip_conditions_check(
 
     # Check
     pw = pair_wise_flip_flopping(w)
-    ac = average_condition_flip_flopping(w)
+    ac = set_average_flip_flopping(w)
 
     # Warn if either check failed
     if not pw:
         logger.warn(failed.format('pair-wise flip-flopping'))
     if not ac:
-        logger.warn(failed.format('average-condition flip-flopping'))
+        logger.warn(failed.format('set-average flip-flopping'))
 
     # Warn about columns and precision if checks failed
     if not pw or not ac:
@@ -209,7 +209,7 @@ def _flip_flop_subset(w):
     flip_flops = [
         pair_wise_flip_flopping,
         dominant_flip_flopping,
-        average_condition_flip_flopping,
+        set_average_flip_flopping,
         each_class_max
     ]
 
@@ -691,10 +691,10 @@ def dominant_flip_flopping(W):
     return True
 
 
-def average_condition_flip_flopping(W):
+def set_average_flip_flopping(W):
     """Determine if a unique walk matrix demonstrates ACFF.
 
-    Average-Condtion flip-flopping is defined as:
+    Set-Average flip-flopping is defined as:
 
     For all pairs of subsets (S, T) where S and T are not equal to the empty
     set and do not intersect, there exists a walk of length L[x] such that
@@ -709,7 +709,7 @@ def average_condition_flip_flopping(W):
     Returns
     -------
     boolean
-        True if average-condition flip-flopping holds for `W`
+        True if set-average flip-flopping holds for `W`
     """
     # Work with an ndarray representation of W
     w = W.getA()
