@@ -64,7 +64,7 @@ depth details on individual functions, see their documentation in `/code/polygra
 | nonnegative_linear_system_check | Check for deceptiveness by solving for `Wx = (gamma * e) - diag(expm(A))` |
 | pair_wise_flip_flopping | Check for pair-wise flip-flopping property |
 | dominant_flip_flopping | Check for dominant flip-flopping property |
-| average_condition_flip_flopping | Check for average-condition flip-flopping property |
+| set_average_flip_flopping | Check for set-average flip-flopping property |
 | each_class_max | Check for each-class-max property |
 
 ### Verbose Mode
@@ -198,31 +198,6 @@ polygraph.pair_wise_flip_flopping(walk_obj['eig_matrix'])
 ```
 Running this code will print `False`, indicating the pyramid prism with 2 sides and 3 layers
 does not meet the necessary criterion to be deceptive.
-
-### Checking for Deceptiveness - Not Deceptive by Average-Condtion Flip-Flopping
-
-Average-Condition Flip-Flopping is a necessary condition for a graph to be deceptive that can complement the pair-wise condition.
-Here is an example of a graph that passes the pair-wise condition, but does not pass the average-condition metric.
-
-```python
-# Import spiderdonuts modules
-from code import polygraph, generators as gen
-
-# Generate a 4-sided, 1-layer pyramid prism using provided graph generators
-pyramid_prism = gen.pyramid_prism(4, 1)
-
-# Compute walk class info
-walk_obj = polygraph.walk_classes(pyramid_prism)
-
-# First Check for Pair-Wise Flip-Flopping, which will return True
-print(polygraph.pair_wise_flip_flopping(walk_obj['eig_matrix']))
-```
-Running the above code will print `True`, indicating the graph satisfies the pair-wise flip-flop condition.
-However, running
-```python
-print(polygraph.average_condition_flip_flopping(walk_obj['eig_matrix']))
-```
-will instead return `False`, proving that this graph does not satisfy the necessary average-condition, and so must not be deceptive.
 
 
 ### Checking for Deceptiveness - Deceptive by Positive Linear System Check
