@@ -29,9 +29,8 @@ def _necessary_flip_flip_conditions_check(
         w, full_columns, arbitrary_precision):
     """Check whether or not a walk matrix satisfies necessary flip-flop conditions.
 
-    The following flip-flopping conditions are known to be necessary
-    1. pair-wise
-    2. set-average
+    The pair-wise flip-flopping condition is known to be necessary.
+    We merely suspect the set-average condition is necessary.
 
     Parameters
     ----------
@@ -52,7 +51,7 @@ def _necessary_flip_flip_conditions_check(
 
     # Warning template string
     failed = (
-        'Reduced walk matrix failed necessary flip-flopping check: {}. '
+        'Reduced walk matrix failed a flip-flopping check: {}. '
         'A deceptive function cannot be generated for it.'
     )
 
