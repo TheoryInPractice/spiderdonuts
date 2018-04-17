@@ -330,9 +330,7 @@ The failure of the optimization program, and hence the nonnegative linear system
 
 ### Analyzing a Deceptive Spidertorus
 
-The spidertorus graphs we designed grow large rather quickly, but they are sparse and specially structured graphs. We designed special functions to compute their walk classes and analyze their deceptiveness efficiently.
-
-Here is an example of how to efficiently compute the walk classes of a spidertorus graph, and use the walk class information to check for deceptiveness. This is the spidertorus graph from Figure 1 in the paper *When Centrality Measures Deceive Us* by Eric Horton, Kyle Kloster, and Blair D. Sullivan, and establishes deceptiveness using Corollary 3.6 from that manuscript.
+The spidertorus graphs we designed grow large rather quickly, but they are sparse and specially structured graphs. We designed special functions to compute their walk classes and analyze their deceptiveness efficiently. Here is an example of how to efficiently compute the walk classes of a spidertorus graph, and use the walk class information to check for deceptiveness.
 
 ```python
 # Import spiderdonuts modules
@@ -390,17 +388,97 @@ graphs.draw_with_category(walk_obj['graph'], 'out.png')
 
 ----------
 
+## Reproducing results from paper
+Here we use our codes to reproduce claims made about explicit deceptive graphs in our paper *When Centrality Measures Deceive Us* by Eric Horton, Kyle Kloster, and Blair D. Sullivan.
+
+### Analyzing Deceptive Spidertorus with positive
+This is the spidertorus graph from Figure 3.1 in the paper; our code establishes deceptiveness using Corollary 3.6 from the paper.
+
+```python
+# Import spiderdonuts modules
+from code import polygraph, generators as gen
+
+# Generate a deceptive spidertorus
+spidertorus_obj = gen.spider_torus(4, 2, [5, 3])
+
+# Compute walk class info
+walk_obj = polygraph.spider_torus_walk_classes(spidertorus_obj)
+
+# Check for a solution to the system Wx = e
+print(polygraph.positive_linear_system_check(walk_obj))
+```
+Running the above code will print output similar to, if not identical to, the following:
+```python
+     fun: 0.0015427388310380642
+ message: 'Optimization terminated successfully.'
+     nit: 8
+   slack: array([ 0.        ,  0.        ,  0.        ,  0.        ,  0.00132889,
+        0.00021384])
+  status: 0
+ success: True
+       x: array([  1.00000000e-10,   1.00000000e-10,   1.00000000e-10,
+         1.00000000e-10,   1.32889351e-03,   2.13844921e-04])
+```
+As noted in our code examples above, the optimization returning `True` for success indicates the linear solver produced a positive solution to the equation `W*x=e`. By Corollary 3.6, this demonstrates the graph is *f*-deceptive for some analytic function f with positive power-series coefficients.
+
+
+### Analyzing KKS graph
+The graph `G(4,5)` was first shown to be deceptive in the paper *Walk-regularity and walk entropy* by Kyle Kloster, Dan Kral, and Blair D. Sullivan. In our manuscript we generalized this graph to the graph `G(c,m)`, depicted in Figure 6.1, which consists of an independent set of size `m` connected by a perfect matching to each of `m` different cliques of size `c`.
+
+Both `G(4,5)` and `G(5,6)` are members of an entire family of graphs which we prove are deceptive in our manuscript. Here we show how to use our function `kks_graph(c,m)` for producing members of that family, `G(c,m)`. We then show both `G(4,5)` and `G(5,6)` are deceptive using Corollary 3.6 from our manuscript.
+
+
+```python
+# Import spiderdonuts modules
+from code import polygraph, generators as gen
+
+# Generate kks graphs
+kks_graph = gen.kks_graph(4,5)
+kks_graph2 = gen.kks_graph(5,6)
+
+# Compute walk class info
+walk_obj = polygraph.walk_classes(kks_graph)
+walk_obj2 = polygraph.walk_classes(kks_graph2)
+
+# Check for a solution to the system Wx = e
+print(polygraph.positive_linear_system_check(walk_obj))
+print(polygraph.positive_linear_system_check(walk_obj2))
+```
+
+Running the above code will print output similar to, if not identical to, the following:
+```python
+     fun: 0.0019244211908294355
+ message: 'Optimization terminated successfully.'
+     nit: 8
+   slack: array([ 0.        ,  0.        ,  0.        ,  0.        ,  0.0016449 ,
+        0.00027952])
+  status: 0
+ success: True
+       x: array([  1.00000000e-10,   1.00000000e-10,   1.00000000e-10,
+         1.00000000e-10,   1.64489600e-03,   2.79524793e-04])
+
+     fun: 0.091666754746666676
+ message: 'Optimization terminated successfully.'
+     nit: 14
+   slack: array([ 0.08333344,  0.        ,  0.00833332,  0.        ,  0.        ,  0.        ])
+  status: 0
+ success: True
+       x: array([  8.33334381e-02,   1.00000000e-10,   8.33331621e-03,
+         1.00000000e-10,   1.00000000e-10,   1.00000000e-10])
+```
+As noted in our code examples above, the optimization returning `True` for success indicates the linear solver produced a positive solution to the equation `W*x=e`. By Corollary 3.6, this demonstrates that the graphs G(4,5) and G(5,6) are *f*-deceptive for some analytic function f with positive power-series coefficients.
+
+
+----------
+
 ## License
 
-<!---
 **Important**: spiderdonuts is *research software*, so you should cite us when you use it in scientific publications! Please see the CITATION file for citation information.
-[![DOI](https://zenodo.org/...)](https://zenodo.org/badge/...)
-
--->
 
 Spiderdonuts is released under the BSD license; see the LICENSE file.
 Distribution, modification and redistribution, and incorporation into other
 software is allowed.
+
 
 
 ## Acknowledgements
