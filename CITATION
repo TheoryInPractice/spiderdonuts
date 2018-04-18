@@ -1,0 +1,47 @@
+*********
+Citations
+*********
+
+Software Citation
+=================
+
+If you use the Spider Donuts software, you must cite:
+
+E. Horton, K. Kloster, and B.D. Sullivan. (2018)
+Spider Donuts: Version 1.0.0. Zenodo. 10.5281/zenodo.1219253
+
+..code-block::tex
+
+                  @misc{spiderdonuts_v1.0.0,
+                    author       = {Eric Horton and
+                                    Kyle Kloster and
+                                    Blair D. Sullivan},
+                    title        = {Spider Donuts: Version 1.0.0},
+                    month        = apr,
+                    year         = 2018,
+                    doi          = {10.5281/zenodo.1219253},
+                    url          = {http://dx.doi.org/10.5281/zenodo.1219253}
+                  }
+
+If you use any of our code for analyzing walk structures in graphs you should *also*
+cite the relevant paper as directed below.
+
+===========================================================
+
+The codes for checking necessary and sufficient conditions in the Spider Donuts repo implement results described in:
+
+    E. Horton, K. Kloster, and B.D. Sullivan. (2018)
+    When centrality measures deceive us.
+
+
+.. code-block:: tex
+
+@article{spiderdonuts2018,
+  author       = {Eric Horton and
+                  Kyle Kloster and
+                  Blair D. Sullivan},
+  title        = {When Centrality Measures Deceive Us},
+  volume       = {abs/1804.05966}
+  year         = {2018},
+  url          = {https://arxiv.org/abs/1804.05966}
+}
